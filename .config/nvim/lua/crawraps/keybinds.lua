@@ -22,10 +22,10 @@ map('n', '<A-\\>', '<CMD>split<CR>')
 
 -- Move line up and down in NORMAL and VISUAL modes
 -- Reference: https://vim.fandom.com/wiki/Moving_lines_up_or_down
-map('n', '<M-j>', '<CMD>move .+1<CR>')
-map('n', '<M-k>', '<CMD>move .-2<CR>')
-map('x', '<M-j>', ":move '>+1<CR>gv=gv")
-map('x', '<M-k>', ":move '<-2<CR>gv=gv")
+map('n', '<C-j>', '<CMD>move .+1<CR>')
+map('n', '<C-k>', '<CMD>move .-2<CR>')
+map('x', '<C-j>', ":move '>+1<CR>gv=gv")
+map('x', '<C-k>', ":move '<-2<CR>gv=gv")
 
 -- Buffer navigation
 map('n', '<M-1>', '<CMD>lua require("bufferline").go_to_buffer(1, true)<CR>')
