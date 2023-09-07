@@ -1,0 +1,35 @@
+#!/bin/bash
+
+workspace=1
+
+function get-windows {
+  local raw=`hyprctl workspaces -j`  
+  local length=`echo $raw | jq length`
+
+  for (( i = 0; i < $length; i++ )); do
+    local id=`echo $raw | jq ".[$i].id"`
+
+    if [[ $id == $workspace ]]; then
+      windows=`echo $raw | jq ".[$i].windows"`
+    fi
+  done
+}
+
+function handler {
+  if [[ ${1:0:9} == "workspace" ]]; then
+    workspace=${1:11}
+  fi
+
+  if [[ ${1:0:9} == "workspace" || ${1:0:10} == "openwindow" || ${1:0:11} == "closewindow" ]]; then
+    get-windows
+
+    if [[ $windows > 1 || $windows == 0 ]]; then
+      echo 'true'
+    else
+      echo 'false'
+    fi
+  fi
+}
+
+socat -u UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock - | while read event; do handler $event; done
+

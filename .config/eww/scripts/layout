@@ -1,0 +1,11 @@
+#!/bin/bash
+
+IFS=','
+
+function handler {
+  if [[ ${1:0:12} == "activelayout" ]]; then
+    echo ${2:0:2} | tr '[:upper:]' '[:lower:]'
+  fi
+}
+
+socat -u UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock - | while read event; do handler $event; done

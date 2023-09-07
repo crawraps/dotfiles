@@ -1,0 +1,18 @@
+(defvar ws-items '[1, 2, 3, 4, 5, 6, 7, 8, 9]')
+(defvar active-workspace '1')
+(deflisten filled-workspaces :initial '1' `scripts/workspace`)
+
+(defwidget workspaces []
+  (box
+    :class 'workspaces'
+    :space-evenly false
+    (for item in ws-items
+      (button
+        :class 'workspace ${active-workspace == item ? "active" : ""}'
+        :visible {matches(filled-workspaces, item)}
+        :halign 'fill'
+        item
+      )
+    )
+  )
+)

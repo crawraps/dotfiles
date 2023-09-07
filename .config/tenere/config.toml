@@ -1,0 +1,13 @@
+archive_file_name = "tenere.archive"
+model = "ChatGPT"
+
+[key_bindings]
+show_help = '?'
+show_history = 'h'
+new_chat = 'n'
+save_chat = 's'
+
+[chatgpt]
+openai_api_key = "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"
+model = "gpt-3.5-turbo"
+url = "https://api.openai.com/v1/chat/completions"

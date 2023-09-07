@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# rice backup
+
+wallpaper=`ls $WALLPAPERS | shuf -n 1`
+state set wallpaper $wallpaper
+echo Y | ricemood -a
+
+eww daemon && eww open top-main
+swww init && state watch wallpaper | while read line; do swww img -t wipe --transition-duration 1.5 --transition-fps 165 --transition-step 200 --transition-angle 30 "$WALLPAPERS/$line" 2> /dev/null; done

@@ -1,0 +1,189 @@
+#!/bin/bash
+DEFAULT_STATE_DIR=$HOME/.local/state/custom
+STATE_DIR=$DEFAULT_STATE_DIR
+IS_QUIET=false
+
+function describe {
+  echo "Control user's custom state"
+}
+
+function list-commands {
+  echo "Available commands:"
+  echo "create {state} {value}          create new state with initial value"
+  echo "delete {state}                  delete state"
+  echo "ls,list                         list all states in format {state} {value}"
+  echo "get {state}                     prints state value"
+  echo "toggle {state}                  toggles specific state"
+  echo "set {state} {value}             change specific state specific value"
+  echo "watch {state} [prefix] [suffix] watch specific state changes"
+}
+
+function list-options {
+  echo "Available options:"
+  echo "-h    show this page"
+  echo "-d    state files directory. Default value: $STATE_DIR"
+  echo "-q    remove command output"
+}
+
+function help {
+  describe
+  echo
+  list-commands
+  echo
+  list-options
+}
+
+while getopts "hqd:" option; do
+   case $option in
+      h)
+        help
+        exit;;
+      q)
+        IS_QUIET=true;;
+      d)
+        STATE_DIR=`realpath $OPTARG`;;
+      *)
+        echo "Error: Invalid option" >&2
+        list-options
+        exit;;
+   esac
+done
+shift $((OPTIND-1))
+
+if [[ ! -n $1 ]]; then
+  help
+  exit
+fi
+
+function validate-state-name {
+  if [ ! -f "$STATE_DIR/$1" ]; then
+    echo "Invalid state name '$1'" >&2
+    echo "Use 'state ls' for list of all states"
+    exit
+  fi
+}
+
+function validate-toggling-state {
+  if [[ $1 != 0 && $1 != 1 ]]; then
+    echo "Invalid state value to toggle" >&2
+    echo "'state toggle' can change only value in format 0 or 1"
+    exit
+  fi
+}
+
+function qecho {
+  if ! $IS_QUIET; then
+    echo $@
+  fi
+}
+
+## commands ##
+function list-states {
+  for file in `ls $STATE_DIR`; do
+    qecho "$file `cat "$STATE_DIR/$file"`"
+  done
+}
+
+function get {
+  validate-state-name $1
+
+  for file in `ls $STATE_DIR`; do
+    if [[ $file == $1 ]]; then
+      qecho `cat "$STATE_DIR/$file"`
+    fi
+  done
+}
+
+function toggle {
+  local state_name=$1
+  validate-state-name $state_name
+
+  local state="$STATE_DIR/$state_name"
+  local state_value=`cat $state`
+  validate-toggling-state $state_value
+
+  if [[ state_value -eq 0 ]]; then
+    echo 1 > $state
+  else
+    echo 0 > $state
+  fi
+  
+  qecho "$state_name `cat $state`"
+}
+
+function set {
+  local state_name=$1
+  local state_value=$2
+  validate-state-name $state_name
+
+  local state="$STATE_DIR/$state_name"
+  echo $state_value > $state
+
+  qecho "$state_name `cat $state`"
+}
+
+function create {
+  local state_name=$1
+  local state_value=$2
+  local state="$STATE_DIR/$state_name"
+
+  if [ -f $state ]; then
+    echo "Provided state already exists" >&2
+    echo "Aborting"
+    exit
+  fi
+
+  if [ ! -d $STATE_DIR ]; then
+    qecho "Provided directory does not exist. Creating new one"
+    mkdir -p $STATE_DIR
+  fi
+
+  touch $state
+  echo $state_value > $state
+  qecho "$state_name $state_value"
+}
+
+function delete {
+  local state_name=$1
+  local state="$STATE_DIR/$state_name"
+  validate-state-name $state_name
+  local state_value=`cat $state`
+
+  rm $state
+  qecho "$state_name = $state_value successfully deleted"
+}
+
+function watch {
+  local state_name=$1
+  validate-state-name $state_name
+  local state="$STATE_DIR/$state_name"
+  
+  qecho "$2`cat $state`$3"
+  while inotifywait -q -e modify $state > /dev/null; do
+    qecho "$2`cat $state`$3"
+  done
+}
+
+case $1 in
+  create)
+    create $2 $3
+    exit;;
+  delete)
+    delete $2
+    exit;;
+  list | ls)
+    list-states
+    exit;;
+  get)
+    get $2
+    exit;;
+  toggle)
+    toggle $2
+    exit;;
+  set)
+    set $2 $3
+    exit;;
+  watch)
+    watch $2 $3 $4
+    exit;;
+esac

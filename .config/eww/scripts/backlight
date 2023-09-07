@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BACKLIGHT_STATUS=`find -L /sys/class/backlight -maxdepth 2 -type f -name brightness 2> /dev/null`
+
+while true; do
+  brightness=`brightnessctl | grep -o '(.*)' | grep -o '[0-9]*'`
+
+  echo $brightness &
+  inotifywait -q -e create,modify $BACKLIGHT_STATUS > /dev/null
+done

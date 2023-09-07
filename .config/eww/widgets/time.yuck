@@ -1,0 +1,45 @@
+(defpoll date :interval "1s" "date '+%d/%m %A'")
+(defpoll time :interval "1s" "date '+ %I:%M'")
+
+(defvar date-revealed false)
+
+(defwidget clock []
+  (eventbox
+    :class 'clock'
+    :onhover '${EWW_CMD} update date-revealed=true'
+    :onhoverlost '${EWW_CMD} update date-revealed=false'
+    :cursor 'pointer'
+    (box
+      :class 'box'
+      :orientation 'h'
+      :space-evenly false
+      (label
+        :class 'time'
+        :halign 'end'
+        :text time
+      )
+      (revealer
+        :class 'date'
+        :reveal date-revealed
+        :transition 'slideright'
+        :halign 'start'
+        '| ${date}'
+      )
+    )
+  )
+)
+
+(defwidget cal []
+	(box :class "cal-box" 
+		 :orientation "v"
+	(box :class "cal-inner-box"
+	(calendar :class "cal" 
+			  :day calendar_day 
+			  :month calendar_month 
+			  :year calendar_year))))
+(defpoll calendar_day :interval "10h"
+    "date '+%d'")
+(defpoll calendar_month :interval "10h"
+    "scripts/calendar")
+(defpoll calendar_year :interval "10h"
+    "date '+%Y'")

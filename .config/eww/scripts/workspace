@@ -1,0 +1,16 @@
+#!/bin/bash
+
+workspaces() {
+  if [[ ${1:0:9} == "workspace" ]]; then
+    filled=`hyprctl workspaces | grep -o '(.*)' | grep -o '[0-9]*' | tr '\n' '|'`
+    eww update active-workspace=${1:11}
+    echo $filled
+  elif [[ ${1:0:10} == "movewindow" ]]; then
+    filled=`hyprctl workspaces | grep -o '(.*)' | grep -o '[0-9]*' | tr '\n' '|'`
+    echo $filled
+  fi
+}
+
+workspaces
+
+socat -u UNIX-CONNECT:/tmp/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock - | while read event; do workspaces $event; done

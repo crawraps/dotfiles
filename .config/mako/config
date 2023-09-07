@@ -1,0 +1,16 @@
+max-history=3
+max-visible=3
+default-timeout=5000
+
+anchor=bottom-center
+font=Inconsolata Nerd Font 14
+background-color=#00000088
+text-color=#ffffff
+width=500
+height=120
+padding=10
+margin=8
+border-size=0
+border-radius=8
+max-icon-size=42
+icon-location=left
