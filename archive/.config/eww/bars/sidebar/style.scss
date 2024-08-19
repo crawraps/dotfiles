@@ -1,0 +1,39 @@
+.sidebar {
+  background-color: transparent;
+  border: none;
+
+  .revealer {
+    transition: 0.5s linear;
+  }
+
+  .bar {
+    background-color: rgba($background, $transparency);
+    padding: 8px 4px 4px;
+    margin-right: 4px;
+    border-radius: $radius;
+  }
+
+  .scale {
+    padding: 0;
+
+    slider {
+      background: transparent;
+      outline-color: transparent;
+      border-color: transparent;
+      color: transparent;
+      box-shadow: none;
+    }
+
+    highlight {
+      background-color: $primary;
+      border: none;
+    }
+  }
+
+  .label {
+    color: $foreground;
+    margin-right: 6.5px;
+    padding: 4px 0 0;
+    font-size: 14px;
+  }
+}

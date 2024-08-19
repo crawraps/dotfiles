@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -z $playerfree ]; then
+  export playerfree=true
+fi
+
+if [[ $1 == 'up' && $playerfree == true ]]; then
+  playerctl previous
+elif [[ $1 == 'down' && $playerfree == true ]]; then
+  playerctl next
+fi
+
+export playerfree=false && sleep 2 && export playerfree=true

@@ -1,0 +1,110 @@
+(defwidget status []
+  (box
+    :class 'status'
+    :space-evenly false
+    :valign 'fill'
+    (pulseaudio)
+    (backlight)
+    (layout)
+    (cpu)
+    (ram)
+    (network)
+  )
+)
+
+;; (defpoll battery-info
+;;   :interval '5s'
+;;   'scripts/power-supply'
+;; )
+;; (defvar battery-icons '["", "", "", "", ""]')
+;; (defwidget battery []
+;;   (box
+;;     :class 'battery'
+;;     '${battery-info.percentage}% ${
+;;       battery-info.percentage > 80 ? battery-icons[4] :
+;;       battery-info.percentage > 60 ? battery-icons[3] :
+;;       battery-info.percentage > 40 ? battery-icons[2] :
+;;       battery-info.percentage > 20 ? battery-icons[1] :
+;;       battery-icons[0]
+;;     }${battery-info.status == 'Charging' || battery-info.status == 'Discharging' ? '  ${battery-info.time}' : ''}'
+;;   )
+;; )
+
+(defpoll network-name
+  :interval '5s'
+  'iwgetid -r'
+)
+(defwidget network []
+  (box
+    :class 'network'
+    '${network-name} '
+  )
+)
+
+(defwidget ram []
+  (box
+    :class 'ram'
+    '${round(EWW_RAM.used_mem / 1024 / 1024 / 1024, 2)} ram'
+  )
+)
+
+(defwidget cpu []
+  (box
+    :class 'cpu'
+    '${round(EWW_CPU.avg, 2)}% 󰍛'
+  )
+)
+
+(deflisten brightness :initial 0 `scripts/backlight`)
+(defvar brightness-icons '["󰃜", "󰃛", "󰖨", "󰃚"]')
+(defwidget backlight []
+  (box
+    :class 'backlight'
+    '${brightness}% ${
+      brightness > 80 ? brightness-icons[3] :
+      brightness > 40 ? brightness-icons[2] :
+      brightness > 20 ? brightness-icons[1] :
+      brightness-icons[0]
+    }'
+  )
+)
+
+(defvar audio-icons '["󰝟", "󰕿", "󰖀", "󰕾", "󱄡"]')
+(deflisten pulseaudio-volume :initial 0 `scripts/pulseaudio`)
+(defwidget pulseaudio []
+  (box
+    :class 'pulseaudio'
+    '${pulseaudio-volume}% ${
+      pulseaudio-volume > 100 ? audio-icons[4] :
+      pulseaudio-volume > 60 ? audio-icons[3] :
+      pulseaudio-volume > 30 ? audio-icons[2] :
+      pulseaudio-volume > 1 ? audio-icons[1] :
+      audio-icons[0]
+    }'
+  )
+)
+
+(deflisten layout-name :initial 'en' `scripts/layout`)
+(deflisten fn-status :initial '0' `state watch fn`)
+(defwidget layout []
+  (eventbox
+    :class 'layout'
+    (box
+      :class 'box'
+      :orientation 'h'
+      :space-evenly false
+      (label
+        :class 'layout-name'
+        :halign 'end'
+        :text layout-name
+      )
+      (revealer
+        :class 'fn'
+        :reveal {fn-status == 1}
+        :transition 'slideleft'
+        :halign 'end'
+        'fn'
+      )
+    )
+  )
+)

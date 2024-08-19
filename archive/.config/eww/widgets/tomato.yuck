@@ -1,0 +1,37 @@
+(deflisten tomato-status :initial '' `scripts/tomato status`)
+
+(defwidget tomato []
+  (box
+    :class 'tomato'
+    :hexpand true
+    (eventbox
+      :cursor 'pointer'
+      :onclick 'scripts/tomato pause'
+      :onrightclick 'scripts/tomato stop'
+      (box
+        :orientation 'h'
+        :class 'box'
+        :space-evenly false
+        (box
+          :class 'icon'
+          :halign 'fill'
+          '󱑂'
+        )
+        (revealer
+          :class 'data'
+          :reveal {!matches(tomato-status, '^P') && !matches(tomato-status, '--')}
+          :transition 'slideright'
+          :halign 'start'
+          (box
+            :class 'data-box'
+            :style 'opacity: ${!matches(tomato-status, '^P') && !matches(tomato-status, '--') ? 1 : 0}'
+            (label
+              :text tomato-status
+              :limit-width 30
+            )
+          )
+        )
+      )
+    )
+  )
+)

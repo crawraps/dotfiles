@@ -1,0 +1,52 @@
+* {
+  color: ^r@fg^;
+}
+
+#window {
+  background-color: transparent;
+}
+
+#entry {
+  background-color: rgba(^r@bg#rgb^, .2);
+  color: ^r@fg^;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+#entry selection {
+  background-color: rgba(^r@pr#rgb^, .5);
+}
+
+#main {
+  border-radius: 8px;
+  background-color: rgba(^r@bg#rgb^, .2);
+}
+
+list#plugin {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+label#match-desc {
+  font-size: 10px;
+}
+
+label#plugin {
+  font-size: 14px;
+}
+
+image#plugin {
+  opacity: 0;
+}
+
+#match {
+  padding: 1px 4px;
+}
+
+#match:selected {
+  background: rgba(^r@pr#rgb^, .75);
+  border-radius: 8px;
+  margin-right: 4px;
+}

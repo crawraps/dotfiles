@@ -1,0 +1,68 @@
+body {
+  background-color: transparent;
+  --accent-h: ^r@pr>de(0.5)#h^;
+  --accent-s: ^r@pr>de(0.5)#s^%;
+  --accent-l: ^r@pr>de(0.5)#l^%;
+  --crawraps-bg: ^r@bg#rgb^;
+  --crawraps-background-light: rgba(var(--crawraps-bg), 0.4);
+  --crawraps-background: rgba(var(--crawraps-bg), 0.6);
+  --crawraps-background-dark: rgba(var(--crawraps-bg), 0.8);
+  --modal-background: rgba(var(--crawraps-bg), 0.5);
+}
+
+body.theme-dark.minimal-default-dark {
+  --base-h: ^r@pr>de(0.8)>da(0.4)#h^;
+  --base-s: ^r@pr>de(0.8)>da(0.4)#s^%;
+  --base-l: ^r@pr>de(0.8)>da(0.4)#l^%;
+  --bg1: var(--crawraps-background);
+  --bg2: var(--crawraps-background-light);
+  --ui1: transparent;
+  --ui2: rgba(^r@fg>de(0.5)#rgb^, .2);
+  --tx1: ^r@fg>de(0.4)>li(0.1)^;
+}
+
+.workspace-tabs .workspace-leaf {
+  background-color: var(--crawraps-background);
+}
+.workspace-split.mod-root {
+  background-color: transparent;
+}
+
+.workspace-fake-target-overlay:not(.is-in-sidebar) .workspace-tabs .workspace-leaf, .mod-root .workspace-tabs .workspace-leaf {
+  background-color: var(--crawraps-background-dark);
+}
+
+.workspace-tab-header-container {
+  background-color: var(--crawraps-background-light);
+}
+
+.workspace-tab-container {
+  background-color: transparent;
+}
+
+.workspace-split.mod-root .view-content {
+  background-color: transparent;
+}
+
+.is-focused .workspace-leaf.mod-active .view-header, .view-header {
+  background-color: transparent;
+}
+
+.workspace {
+  background-color: transparent;
+}
+
+.workspace-ribbon, .workspace-ribbon.mod-left::before {
+  background-color: var(--crawraps-background-light);
+}
+
+.modal-bg {
+  background-color: var(--crawraps-background);
+}
+.modal, .modal-bg, .prompt, .menu, .cm-tooltip {
+  backdrop-filter: blur(4px);
+}
+
+.lt-predictions-container.cm-tooltip {
+  background-color: var(--crawraps-background-dark);
+}

@@ -1,0 +1,88 @@
+@use "sass:color";
+$primary: {{ color12 }};
+
+:root {
+  --primary: #{$primary};
+  --primary-h: #{color.hue($primary)};
+  --primary-s: #{color.saturation($primary)};
+  --primary-l: #{color.lightness($primary)};
+  --bg: {{ background | rgb }};
+  --fg: {{ foreground | rgb }};
+}
+
+body {
+  background-color: transparent;
+  --accent-h: var(--primary-h);
+  --accent-s: var(--primary-s);
+  --accent-l: var(--primary-l);
+  --crawraps-bg: var(--bg);
+  --crawraps-background-light: rgba(var(--crawraps-bg), 0.3);
+  --crawraps-background: rgba(var(--crawraps-bg), 0.3);
+  --crawraps-background-dark: rgba(var(--crawraps-bg), 0.5);
+  --modal-background: rgba(var(--crawraps-bg), 0.5);
+
+  --h1-size: 1.625em;
+  --h2-size: 1.475em;
+  --h3-size: 1.25em;
+}
+
+body.theme-dark.minimal-default-dark {
+  --base-h: var(--primary-h);
+  --base-s: var(--primary-s);
+  --base-l: var(--primary-l);
+  --bg1: var(--crawraps-background);
+  --bg2: var(--crawraps-background-light);
+  --ui1: transparent;
+  --ui2: hsla(var(--base-h), var(--base-s), var(--base-l), 0.2);
+  --tx1: rgb(var(--fg));
+}
+
+.workspace-tabs .workspace-leaf {
+  background-color: var(--crawraps-background);
+}
+.workspace-split.mod-root {
+  background-color: transparent;
+}
+
+.workspace-fake-target-overlay:not(.is-in-sidebar) .workspace-tabs .workspace-leaf, .mod-root .workspace-tabs .workspace-leaf {
+  background-color: var(--crawraps-background-dark);
+}
+
+.workspace-tab-header-container {
+  background-color: var(--crawraps-background-light);
+}
+
+.workspace-tab-container {
+  background-color: transparent;
+}
+
+.workspace-split.mod-root .view-content {
+  background-color: transparent;
+}
+
+.is-focused .workspace-leaf.mod-active .view-header, .view-header {
+  background-color: transparent;
+}
+
+.workspace {
+  background-color: transparent;
+}
+
+.workspace-ribbon, .workspace-ribbon.mod-left::before {
+  background-color: var(--crawraps-background-light);
+}
+
+.modal-bg {
+  background-color: var(--crawraps-background);
+}
+.modal, .modal-bg, .prompt, .menu, .cm-tooltip {
+  backdrop-filter: blur(4px);
+}
+
+.lt-predictions-container.cm-tooltip {
+  background-color: var(--crawraps-background-dark);
+}
+
+.markdown-source-view.mod-cm6 .cm-content > .HyperMD-header {
+  margin-bottom: .75em !important;
+}

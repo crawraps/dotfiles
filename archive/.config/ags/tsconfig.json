@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "nodenext",
+    "moduleResolution": "node",
+    "lib": [
+      "ES2022"
+    ],
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "typeRoots": [
+      "./types"
+    ],
+    "skipLibCheck": true,
+    "paths": {
+      "widgets/*": ["./widgets/*"],
+      "windows/*": ["./windows/*"],
+      "scripts/*": ["./scripts/*"]
+    }
+  }
+}

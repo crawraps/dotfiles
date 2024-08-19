@@ -1,0 +1,48 @@
+(deflisten brightness-revealed :initial 'false' `python scripts/backlight-changed`)
+
+(defwidget brightnessbar [hovered]
+  (revealer
+    :class 'revealer'
+    :reveal {brightness-revealed || hovered}
+    :duration '500ms'
+    :transition 'slideleft'
+    :halign 'end'
+    :height '300px'
+
+    (box
+      :class 'interactive-box'
+
+      (box
+        :class 'bar'
+        :orientation 'v'
+        :space-evenly false
+        :valign 'end'
+
+        (scale
+          :flipped true
+          :value brightness
+          :orientation 'v'
+          :min 0
+          :max 100
+          :onchange `brightnessctl -d amdgpu_bl2 set {}%`
+          :class 'scale'
+          :height 300
+        )
+
+        (label
+          :class 'label'
+          :text '${
+            brightness > 80 ? brightness-icons[3] :
+            brightness > 40 ? brightness-icons[2] :
+            brightness > 20 ? brightness-icons[1] :
+            brightness-icons[0]
+          }'
+          :limit-width 1
+          :xalign 0.5
+          :yalign 0.5
+          :style 'margin-right: 2px; font-size: 12px; padding-bottom: 2px'
+        )
+      )
+    )
+  )
+)

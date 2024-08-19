@@ -1,0 +1,49 @@
+(deflisten soundbar-revealed :initial 'false' `python scripts/pulseaudio-changed`)
+
+(defwidget soundbar [hovered]
+  (revealer
+    :class 'revealer'
+    :reveal {soundbar-revealed || hovered}
+    :duration '500ms'
+    :transition 'slideleft'
+    :halign 'end'
+
+    (box
+      :class 'interactive-box'
+      :hexpand true
+      :vexpand true
+
+      (box
+        :class 'bar'
+        :orientation 'v'
+        :space-evenly false
+
+        (scale
+          :flipped true
+          :value pulseaudio-volume
+          :orientation 'v'
+          :min 0
+          :max 100
+          :onchange `pactl set-sink-volume @DEFAULT_SINK@ {}%`
+          :class 'scale'
+          :vexpand true
+        )
+
+        (label
+          :class 'label'
+          :text '${
+            pulseaudio-volume > 100 ? audio-icons[4] :
+            pulseaudio-volume > 60 ? audio-icons[3] :
+            pulseaudio-volume > 30 ? audio-icons[2] :
+            pulseaudio-volume > 1 ? audio-icons[1] :
+            audio-icons[0]
+          }'
+          :limit-width 1
+          :xalign 0.5
+          :yalign 0.5
+          :style 'margin-right: 4px; font-size: 16px'
+        )
+      )
+    )
+  )
+)

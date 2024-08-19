@@ -1,0 +1,1152 @@
+/*
+
+--- NEW TAB -----------------------------------------------------------------------------------------------------------------------------------------
+
+Styles for new tab
+
+*/
+
+
+@-moz-document url("about:home"), url("about:newtab") {
+  
+  /* accent color */
+  :root{
+    --newtab-primary-action-background: var(--shy-color) !important;
+    --newtab-primary-action-background-pocket: var(--shy-color) !important;
+  }
+  
+  .toggle-button[aria-pressed="true"] {
+    background: var(--shy-color) !important;
+    border-color: transparent;
+  }
+  
+  .home-section .section .sponsored-checkbox:checked {
+    background-color: var(--shy-color) !important;
+  }
+  
+  .search-wrapper.fake-focus:not(.search.disabled) .search-handoff-button {
+    border: 1px solid var(--shy-color) !important;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--shy-color) 20%, transparent) !important;
+  }
+  
+  /* rounded corners */
+  .top-site-button,
+  .context-menu button,
+  .close-button,
+  .home-section .section .selector
+  {border-radius: var(--rounding) !important;}
+  
+  .top-site-outer, 
+  .top-site-inner,
+  .context-menu,
+  .icon-settings
+  {border-radius: var(--big-rounding) !important;}
+  
+  /* pinned links */
+  .top-site-button {overflow: clip;}
+  
+  .tile, .top-site-icon{
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+  
+  .top-site-button, .customize-menu{
+    background-color: var(--tr-col) !important;
+    backdrop-filter: blur(var(--blur-radius));
+  }
+    
+  .title {
+    background-color: var(--newtab-background-color-secondary);
+    & > span {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+  }
+  
+  .top-site-outer:is(.active, :focus, :hover){
+    background: var(--tr-light-col) !important;
+  }
+  
+  .top-site-outer, .top-site-inner {
+    & > a {padding: 0 !important;}
+    padding: 5px;
+  }
+  
+  .top-site-outer:not(:hover) .icon-pin-small{display: none !important;}
+  
+  /* search box */
+  .search-handoff-button {
+    border-radius: 100px !important;
+    background-color: var(--tr-dark-col) !important;
+    backdrop-filter: blur(var(--blur-radius));
+  }
+  
+  @media (height > 700px) {
+    body:not(.inline-onboarding) .fixed-search .search-wrapper {
+      background-color: var(--tr-dark-col) !important;
+      backdrop-filter: blur(var(--blur-radius));
+    }
+    .logo-and-wordmark {
+      display: flex !important;
+    }
+  }
+  
+  /* wallpaper */
+  body{
+    background: transparent !important;
+    /* background-image: url("./wallpaper.png") !important; */
+    /* background-repeat: no-repeat !important; */
+    /* background-position: center !important; */
+    /* background-size: cover !important; */
+    /* background-attachment: fixed !important; */
+  }
+  
+  /* central box */
+  main{
+    margin-top: 15% !important;
+    height: 50%;
+    background-color: var(--tr-light-col);
+    border-radius: var(--giant-rounding);
+  }
+  
+  /* settings */
+  .icon-settings:hover {background-color: var(--tr-hov-col) !important;}
+    
+  .home-section .section .selector{
+    background-color: var(--tr-col) !important;
+    &:hover{background-color: var(--tr-hov-col) !important;}
+  }
+  
+  /* autograph */
+  .activity-stream::before,
+  .activity-stream::after
+  {
+    font-family: monospace;
+    color: white;
+    opacity: 0.042;
+    position: fixed;
+    z-index: 99999;
+    bottom: 10px;
+  }
+
+  section[data-section-id="topstories"] {
+    display: none !important;
+  }
+}
+
+
+/*
+
+--- ABOUT: PAGES ------------------------------------------------------------------------------------------------------------------------------------
+
+Styles for settings, Firefox View, etc.
+
+*/
+
+
+@-moz-document url-prefix("about:"), url-prefix("chrome:"){
+
+  /* accent color */
+  :root, panel, dialog, window{
+    --in-content-primary-button-background-active: var(--shy-color) !important;
+    --in-content-primary-button-background-hover:  var(--shy-color) !important;
+    --lwt-toolbarbutton-icon-fill-attention:       var(--shy-color) !important;
+    --in-content-primary-button-background:        var(--shy-color) !important;
+    --toolbarbutton-icon-fill-attention:           var(--shy-color) !important;
+    --fxview-primary-action-background:            var(--shy-color) !important;
+    --toolbar-field-focus-border-color:            var(--shy-color) !important;
+    --button-primary-active-bgcolor:               var(--shy-color) !important;
+    --button-primary-hover-bgcolor:                var(--shy-color) !important;
+    --uc-checkbox-checked-bgcolor:                 var(--shy-color) !important;
+    --color-accent-primary-active:                 var(--shy-color) !important;
+    --color-accent-primary-hover:                  var(--shy-color) !important;
+    --checkbox-checked-bgcolor:                    var(--shy-color) !important;
+    --in-content-accent-color:                     var(--shy-color) !important;
+    --button-primary-bgcolor:                      var(--shy-color) !important;
+    --in-content-link-color:                       var(--shy-color) !important;
+    --color-accent-primary:                        var(--shy-color) !important;
+    --focus-outline-color:                         var(--shy-color) !important;
+    --input-border-color:                          var(--shy-color) !important;
+  }
+  
+  :is(.icon, img)[src="chrome://global/skin/icons/info-filled.svg"] {fill: var(--shy-color) !important;}
+  moz-message-bar {background-color: var(--in-content-button-background) !important;}
+  
+  .cpu{
+    background: linear-gradient(
+      to left,
+      var(--shy-color) 
+      calc(var(--bar-width) * 1%),
+      transparent 
+      calc(var(--bar-width) * 1%)
+    ) !important;
+  }
+  
+  button[role="tab"][selected]::before {display: none !important;}
+  
+  /* big rounded corners */
+  .menupopup-arrowscrollbox,     moz-message-bar,
+  .addon-detail-contribute,
+  .web-appearance-choice,        panel-list,
+  .sidebar-footer-link,          body[dir],
+  .info-box-container,           menupopup,
+  .sidebar-item--tall,           section,
+  .qr-code-box,                  details,
+  .action-box,                   select,
+  .dialogBox,                    table,
+  .info-box,                     tree,
+  .category,
+  .toolbar,
+  .modal,
+  .card,
+
+  #ping-picker,
+  #translations-manage-install-list
+  
+  {border-radius: var(--big-rounding) !important;}
+  
+  /* small rounded corners */
+  button:not(
+    :is(
+      [class*="devtools"],
+      [class*="search"],
+      [class*="tab"]
+    )
+  ),
+  
+  input:not([type="checkbox"]),
+  
+  .search-container,
+  search-textbox,
+  menulist,
+  span,
+  a, 
+  
+  #activeLanguages
+  
+  {border-radius: var(--rounding) !important;}
+  
+  /* only top or bottom corners */
+  .card-heading-image{
+    border-top-left-radius: var(--big-rounding) !important;
+    border-top-right-radius: var(--big-rounding) !important;
+  }
+  
+  listheader{
+    border-top-left-radius: var(--rounding) !important;
+    border-top-right-radius: var(--rounding) !important;
+  }
+  
+  richlistbox{
+    border-bottom-left-radius: var(--rounding) !important;
+    border-bottom-right-radius: var(--rounding) !important;
+  }
+
+  body{
+    background: transparent !important;
+  }
+}
+
+
+/* extensions popups rounding */
+@-moz-document url-prefix("moz-extension:"){
+  body {border-radius: var(--big-rounding) !important;}
+}
+
+/* screenshots */
+/* variables aren't used because they don't work here for some reason */
+
+#screenshots-component{
+  button {border-radius: 11.5px !important;}
+  #buttons-container {border-radius: 15px !important;}
+
+  .screenshots-button {
+    --in-content-primary-button-background: var(--shy-color) !important;
+    --in-content-primary-button-background-hover: color-mix(in oklab, var(--in-content-primary-button-background), white 10%);
+    --in-content-primary-button-background-active: color-mix(in oklab, var(--in-content-primary-button-background), white 20%);
+    --in-content-focus-outline-color: var(--shy-color);
+  }
+}
+
+/* Custom pages */
+
+@-moz-document url-prefix(about:preferences) {
+  :root {
+    --in-content-page-background: transparent !important;
+    --in-content-box-background: transparent !important;
+  }
+}
+
+@-moz-document url-prefix(about:addons) {
+  :root {
+    --in-content-page-background: transparent !important;
+  }
+}
+
+@-moz-document url-prefix(about:support) {
+  :root {
+    --in-content-page-background: transparent !important;
+    --in-content-table-background: transparent !important;
+    --in-content-table-header-background: transparent !important;
+  }
+}
+
+@-moz-document url-prefix(about:config) {
+  :root {
+    --in-content-page-background: transparent !important;
+    --in-content-box-background: transparent !important;
+  }
+}
+
+/* YouTube */
+
+@-moz-document domain("youtube.com") {
+  :root {
+    background-color: transparent !important;
+    --ytd-searchbox-legacy-button-border-color: rgba(160, 160, 171, 0.3) !important;
+    --ytd-searchbox-legacy-button-color: transparent;
+  }
+
+  html,
+  ytd-app,
+  ytd-mini-guide-renderer {
+    background-color: transparent !important;
+  }
+
+  ytd-mini-guide-entry-renderer {
+    background-color: transparent !important;
+    border: 1px solid rgba(160, 160, 171, 0.3) !important;
+  }
+
+  ytd-playlist-panel-renderer {
+    --yt-lightsource-section2-color: transparent !important;
+  }
+
+  div.header.style-scope.ytd-playlist-panel-renderer {
+    background: transparent !important;
+  }
+
+  #full-bleed-container {
+    border-radius: 14px;
+  }
+
+  .playlist-items.ytd-playlist-panel-renderer {
+    background-color: transparent !important;
+  }
+
+  #items.ytd-mini-guide-renderer {
+    gap: 2rem !important;
+  }
+
+  a.ytd-mini-guide-entry-renderer {
+    padding: 8px 0 7px !important;
+  }
+
+  #background.ytd-masthead {
+    background-color: transparent !important;
+  }
+
+  #header {
+    display: none !important;
+  }
+
+  #container.ytd-searchbox {
+    background-color: transparent !important;
+    border-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .button-container.ytd-rich-shelf-renderer {
+    background-color: transparent !important;
+  }
+}
+
+/*GITHUB*/
+@-moz-document domain("github.com") {
+  :root {
+    --bgColor-default: transparent !important;
+    --bgColor-inset: transparent !important;
+    --bgColor-muted: rgba(160, 160, 171, 0.3) !important;
+    --borderColor-default: rgba(160, 160, 171, 0.3) !important;
+    --borderColor-muted: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .color-bg-subtle {
+    background-color: transparent !important;
+  }
+
+  .input-contrast {
+    background-color: transparent !important;
+  }
+
+  .TimelineItem::before {
+    content: none !important;
+  }
+}
+
+/* GOOGLE */
+@-moz-document domain("google.com") {
+  :root {
+    --JKqx2: var(--shy-color) !important;
+  }
+
+  a:visited {
+    color: rgb(var(--themed-secondary)) !important;
+  }
+
+  body {
+    background: transparent !important;
+  }
+
+  .MV3Tnb,
+  .gb_x,
+  .FPdoLc.lJ9FBc,
+  .o3j99.qarstb,
+  .o3j99.c93Gbe,
+  .Lu57id,
+  .lJ9FBc,
+  .YR2tRd,
+  .QViVQe,
+  .Yyxs2.ZGomKf,
+  .ym1pid.KLEmSd,
+  .s2agxb.mWcf0e,
+  #sfooter {
+    display: none !important;
+  }
+
+  #gb,
+  .appbar,
+  .MjjYud,
+  .hlcw0c,
+  .dG2XIf,
+  .YbqTTb {
+    background-color: transparent !important;
+  }
+
+  .CvDJxb {
+    background-color: transparent;
+  }
+
+  .RNNXgb,
+  .cF4V5c {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: none !important;
+  }
+
+  .xtSCL {
+    border: none !important;
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .aajZCb {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .ZFiwCf,
+  .kLhEKe,
+  .p8Jhnd,
+  .S8ee5 {
+    background-color: transparent !important;
+  }
+
+  .b2Rnsc {
+    background-color: transparent !important;
+    border: 1px solid rgba(161, 161, 170, 0.1);
+  }
+
+  .GKS7s,
+  .Ww4FFb {
+    background-color: transparent !important;
+    border: 1px solid rgba(161, 161, 170, 0.1);
+  }
+
+  g-inner-card {
+    background-color: transparent !important;
+    border: 1px solid rgba(161, 161, 170, 0.1);
+  }
+
+  .REySof,
+  .NQyKp.h4wEae {
+    background-color: transparent !important;
+  }
+
+  .NQyKp.Hyaw8c.h4wEae.Maj6Tc {
+    border-color: rgba(161, 161, 170, 0.2) !important;
+  }
+
+  .UivI7b {
+    background: transparent !important;
+    border: 1px solid rgba(161, 161, 170, 0.2) !important;
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .akqY6 {
+    background-color: rgba(161, 161, 170, 0.2) !important;
+    border: 1px solid rgba(161, 161, 170, 0.2) !important;
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .zLSRge,
+  .Hwkikb.WY0eLb {
+    /*border: 1px solid rgba(161, 161, 170, 0.2) !important;*/
+    border-color: rgba(161, 161, 170, 0.2) !important;
+  }
+
+  .wdQNof {
+    border-color: rgba(161, 161, 170, 0.1) !important;
+  }
+
+  .gYJ4of.famfbb {
+    background-color: transparent !important;
+    border: 1px solid rgba(161, 161, 170, 0.1) !important;
+  }
+
+  g-fab {
+    background-color: rgba(161, 161, 170, 0.1) !important;
+  }
+
+  .GCSyeb {
+    background-color: rgba(161, 161, 170, 0.1) !important;
+  }
+
+  .aUSklf {
+    border-top: rgba(161, 161, 170, 0.1) !important;
+    border-width: 2px;
+  }
+
+  .GOE2if,
+  .ez8jFf,
+  .MsCHpb,
+  .iRPzcb,
+  hr {
+    border-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .ttwCMe {
+    background-color: transparent !important;
+  }
+
+  #rhs.u7yw9 {
+    border-color: rgba(161, 161, 170, 0.3);
+  }
+
+  .qe1Dgc {
+    background-color: transparent !important;
+  }
+
+  .uais2d {
+    background-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .I6TXqe {
+    background-color: transparent !important;
+  }
+
+  .TQc1id .I6TXqe {
+    border: 1px solid rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .sfbg {
+    background-color: transparent !important;
+  }
+
+  #searchform {
+    position: absolute !important;
+  }
+
+  .wH6SXe {
+    background-color: transparent !important;
+  }
+
+  .BA0zte,
+  .bqW4cb {
+    border-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .JJZKK.Wui1sd {
+    border-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .ab_button {
+    background-color: rgba(161, 161, 170, 0.2) !important;
+    border-radius: 10px !important;
+    border-color: transparent !important;
+    transition: background-color 0.2s ease-in !important;
+  }
+
+  .ab_button:hover {
+    background-color: rgba(161, 161, 170, 0.1) !important;
+  }
+
+  .WxVj2b {
+    background: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .RzdJxc {
+    border-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .rKnmn {
+    border-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .Bi9oQd {
+    background-color: rgba(161, 161, 170, 0.3) !important;
+  }
+
+  .JiJthb,
+  .JiJthb .GKS7s:not([selected]) {
+    background-color: transparent !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .JiJthb .F9Idpe.Iy1nvd,
+  .F9Idpe {
+    background: transparent !important;
+  }
+
+  .KLEmSd,
+  .GKS7s {
+    border-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .XNo5Ab, .H9lube {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+@-moz-document domain("github.com") {
+  :root {
+    --bgColor-default: transparent !important;
+    --bgColor-inset: transparent !important;
+    --bgColor-muted: rgba(160, 160, 171, 0.3) !important;
+    --borderColor-default: rgba(160, 160, 171, 0.3) !important;
+    --borderColor-muted: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .color-bg-subtle {
+    background-color: transparent !important;
+  }
+
+  .input-contrast {
+    background-color: transparent !important;
+  }
+
+  .js-snippet-clipboard-copy-unpositioned
+    .markdown-body
+    .snippet-clipboard-content,
+  .js-snippet-clipboard-copy-unpositioned .markdown-body .highlight {
+    background-color: rgba(var(--themed-primary), 0.3) !important;
+    border-radius: 8px !important;
+  }
+
+  .markdown-body .highlight pre,
+  .markdown-body pre {
+    background-color: transparent !important;
+  }
+}
+
+/***********************************************************/
+/*
+/* NOTE: Reddit
+/*
+/***********************************************************/
+@-moz-document domain("reddit.com") {
+  * {
+    --color-neutral-background: transparent !important;
+    --color-neutral-background-weak: transparent !important;
+    --color-neutral-background: transparent !important;
+    --color-neutral-background-selected: rgba(160, 160, 171, 0.3) !important;
+    --color-secondary-background: rgba(160, 160, 171, 0.3) !important;
+    --color-neutral-background-weak: transparent !important;
+    --color-button-secondary-background: transparent !important;
+    --color-neutral-background: transparent !important;
+    --shreddit-content-background: transparent !important;
+    --color-neutral-background-hover: rgba(160, 160, 171, 0.3) !important;
+    --color-tone-5: rgba(40, 40, 40, 0.5) !important;
+    --color-a-visited: rgb(var(--themed-secondary)) !important;
+  }
+
+  blockquote {
+    border-color: rgba(40, 40, 40, 0.5);
+  }
+
+  .\[\&\>\.threadline\>\*\]\:border-tone-4 > .threadline > * {
+    border-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .border-neutral-border {
+    border-color: transparent;
+  }
+
+  .bg-\[color\:var\(--shreddit-content-background\)\] {
+    background-color: transparent !important;
+  }
+
+  .bg-tone-4 {
+    background-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  #comment-tree {
+    background-color: transparent !important;
+  }
+
+  :root.theme-dark .sidebar-grid,
+  :root.theme-dark .grid-container.grid,
+  :root.theme-dark
+    .sidebar-grid
+    .theme-beta:not(.stickied):not(#left-sidebar-container):not(
+      .left-sidebar-container
+    ),
+  :root.theme-dark
+    .sidebar-grid
+    .theme-rpl:not(.stickied):not(#left-sidebar-container):not(
+      .left-sidebar-container
+    ),
+  :root.theme-dark
+    .grid-container.grid
+    .theme-beta:not(.stickied):not(#left-sidebar-container):not(
+      .left-sidebar-container
+    ),
+  :root.theme-dark
+    .grid-container.grid
+    .theme-rpl:not(.stickied):not(#left-sidebar-container):not(
+      .left-sidebar-container
+    ) {
+    background-color: transparent !important;
+  }
+
+  html {
+    background-color: transparent !important;
+  }
+
+  .bg-neutral-background {
+    background-color: transparent !important;
+  }
+
+  .bg-neutral-background-selected {
+    background-color: rgba(160, 160, 171, 0.2) !important;
+  }
+
+  .bg-neutral-background-hover {
+    background-color: rgba(160, 160, 171, 0.2) !important;
+  }
+
+  .bg-secondary-background {
+    background-color: rgba(160, 160, 171, 0.2) !important;
+  }
+
+  .bg-neutral-background-weak {
+    background-color: transparent !important;
+  }
+
+  .button-secondary {
+    background-color: transparent !important;
+  }
+}
+
+/***********************************************************/
+/*
+/* NOTE: Wikipedia
+/*
+/***********************************************************/
+@-moz-document domain("wikipedia.org") {
+  @layer {
+    html,
+    body {
+      background-color: transparent !important;
+    }
+  }
+
+  hr {
+    display: none !important;
+  }
+
+  .pure-form input[type="search"] {
+    background-color: transparent !important;
+    border-color: rgba(160, 160, 171, 0.2) !important;
+    border-radius: 10px 0 0 10px !important;
+    box-shadow: none !important;
+  }
+
+  .pure-button-primary-progressive {
+    background-color: transparent !important;
+    border-color: rgba(160, 160, 171, 0.2) !important;
+    border-radius: 0 10px 10px 0 !important;
+  }
+
+  .lang-list-border {
+    background-color: transparent !important;
+  }
+
+  .lang-list-button-wrapper {
+    display: none !important;
+  }
+
+  .footer {
+    display: none !important;
+  }
+}
+
+/***********************************************************/
+/*
+/* NOTE: Hyprland wiki
+/*
+/***********************************************************/
+@-moz-document domain("hyprland.org") {
+  :is(html[class~="dark"] body) {
+    background-color: transparent !important;
+  }
+
+  :is(html[class~="dark"] .dark\:bg-neutral-800) {
+    background-color: transparent !important;
+    border: 1px solid rgba(160, 160, 171, 0.3) !important;
+  }
+}
+
+/***********************************************************/
+/*
+/* NOTE: Nix Pkgs
+/*
+/***********************************************************/
+@-moz-document domain("nixos.org") {
+  body {
+    background: transparent !important;
+  }
+
+  .navbar.navbar.navbar.navbar.navbar.navbar > .navbar-inner {
+    background-color: rgba(100, 100, 100, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .navbar.navbar.navbar.navbar.navbar.navbar > .navbar-inner li > a {
+    background: rgba(160, 160, 171, 0.2) !important;
+    transition: all 0.2s ease-in !important;
+  }
+
+  .navbar.navbar.navbar.navbar.navbar.navbar > .navbar-inner li > a:hover {
+    background: rgba(160, 160, 171, 0.1) !important;
+  }
+
+  .search-input > div:first-child:first-child:first-child input {
+    background: transparent !important;
+    border: 1px solid rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .search-input > div > button {
+    background: transparent !important;
+    border: 1px solid rgba(160, 160, 171, 0.3) !important;
+    transition: all 0.2s ease-in !important;
+  }
+
+  .search-input > div > button:hover {
+    background-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .btn-group > .btn.active {
+    background-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .btn-group > .btn {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .search-page
+    > .search-results
+    > div
+    > :nth-child(2)
+    > li.package
+    .result-item-show-more {
+    background-color: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .nav-tabs li.active a,
+  .nav-tabs li.active a:focus,
+  .nav-tabs li.active a:hover {
+    background: rgba(160, 160, 171, 0.3) !important;
+  }
+
+  .search-page
+    > .search-results
+    > div
+    > :nth-child(2)
+    > li.package
+    > :nth-child(5)
+    > :nth-child(2)
+    pre,
+  code {
+    background-color: rgba(34, 21, 81, 0.6) !important;
+  }
+}
+
+@-moz-document domain("music.youtube.com") {
+  body {
+    background: transparent !important;
+  }
+
+  #background,
+  #nav-bar-background {
+    display: none !important;
+  }
+
+  #guide-wrapper,
+  #mini-guide-background {
+    border-right: none !important;
+  }
+
+  #progress-bar.ytmusic-player-bar {
+    --paper-slider-active-color: var(--shy-color) !important;
+  }
+
+  .ytmusic-player-bar:hover #progress-bar.ytmusic-player-bar {
+    --paper-slider-knob-color: var(--shy-color) !important;
+    --paper-slider-knob-start-color: var(--shy-color) !important;
+    --paper-slider-knob-start-border-color: var(--shy-color) !important;
+  }
+
+  :root {
+    --ytmusic-general-background-c: transparent !important;
+    --ytmusic-nav-bar: transparent !important;
+    --ytmusic-background: none !important;
+    --ytmusic-player-bar-background: rgba(12, 12, 12, 0.2) !important;
+  }
+}
+
+/* Sideberry custom CSS */
+@-moz-document url(moz-extension://2e6119e4-2055-466b-abf9-f4962b17d673/sidebar/sidebar.html)
+{
+  #root.root {
+    --custom-pr: var(--themed-primary) !important;
+    --custom-fg: var(--themed-foreground) !important;
+
+    --general-border-radius: 10px !important;
+    --general-margin: 4px !important;
+
+    --nav-btn-margin: 8px !important;
+    --nav-btn-width: 35px !important;
+    --nav-btn-height: 35px !important;
+    --nav-btn-len-margin: 3px !important;
+
+    --tabs-audio-btn-width: 22px !important;
+    --tabs-margin: 7px !important;
+    --tabs-height: 36px !important;
+    --tabs-inner-gap: 5px !important;
+    --tabs-border-radius: 15px !important;
+
+    --tabs-normal-bg: transparent !important;
+    --tabs-activated-bg: rgba(var(--themed-primary), 0.25) !important;
+
+    --accent: var(--shy-color) !important;
+    --frame-bg: transparent !important;
+    --frame-el-overlay-selected-border: var(--accent) !important;
+
+    --s-frame-bg: transparent !important;
+    --s-frame-fg: rgba(var(--custom-fg)) !important;
+    --toolbar-bg: transparent !important;
+  }
+
+  :root {
+    --big-rounding: 0px !important;
+    background-color: transparent !important;
+  }
+
+  body {
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  #root_container {
+    background: transparent !important;
+  }
+
+  #root.root {
+    width: 250px !important;
+  }
+
+  /* height calculation */
+  #root.root {
+    --tabs-pinned-height: calc((100vw - var(--tabs-margin)) / 4.6) !important;
+  }
+
+  /* 1 pinned tab */
+
+  .PinnedTabsBar .tab-wrapper:nth-child(1):last-child {
+    width: -moz-available !important;
+    .Tab {
+      height: calc(var(--tabs-pinned-height) / 1.4) !important;
+    }
+  }
+
+  /* 4 tabs in bottom row */
+
+  .PinnedTabsBar:has(
+      .tab-wrapper:is(
+          :nth-child(4),
+          :nth-child(7),
+          :nth-child(10),
+          :nth-child(13),
+          :nth-child(16),
+          :nth-child(19),
+          :nth-child(22),
+          :nth-child(25),
+          :nth-child(28),
+          :nth-child(31),
+          :nth-child(34),
+          :nth-child(37),
+          :nth-child(40),
+          :nth-child(43),
+          :nth-child(46)
+        ):last-child
+    ) {
+    .tab-wrapper:nth-last-child(-n + 4) {
+      width: calc(100% / 4 - var(--tabs-margin) + 1.6px) !important;
+      .Tab {
+        height: calc(var(--tabs-pinned-height) / 1.3) !important;
+      }
+    }
+  }
+
+  /* 2 tabs in bottom row */
+
+  .PinnedTabsBar:has(
+      .tab-wrapper:is(
+          :nth-child(2),
+          :nth-child(5),
+          :nth-child(8),
+          :nth-child(11),
+          :nth-child(14),
+          :nth-child(17),
+          :nth-child(20),
+          :nth-child(23),
+          :nth-child(26),
+          :nth-child(29),
+          :nth-child(32),
+          :nth-child(35),
+          :nth-child(38),
+          :nth-child(41),
+          :nth-child(44),
+          :nth-child(47)
+        ):last-child
+    ) {
+    .tab-wrapper:nth-last-child(-n + 2) {
+      width: calc(100% / 2 - var(--tabs-margin) + 3.5px) !important;
+      .Tab {
+        height: calc(var(--tabs-pinned-height) / 1.2) !important;
+      }
+    }
+  }
+
+  /* 3 tabs in any row */
+
+  .PinnedTabsBar .tab-wrapper {
+    width: calc(100% / 3 - var(--tabs-margin) + 2.3px) !important;
+
+    .Tab {
+      width: -moz-available !important;
+    }
+  }
+
+  /* audio icon */
+  .Tab[data-pin="true"] > .body > .audio {
+    background: transparent !important;
+    box-shadow: none !important;
+    right: 7px !important;
+    top: 7px !important;
+  }
+
+  /* bigger favicon */
+  .Tab[data-pin="true"] > .body > .fav > .fav-icon {
+    width: 30px !important;
+    height: 30px !important;
+    top: -7.5px !important;
+    left: -6.5px !important;
+  }
+
+  /* match badge to bigger icon */
+  .Tab[data-pin="true"] > .body > .fav > .badge {
+    right: -8.5px !important;
+    bottom: -7px !important;
+  }
+
+  /* shadow, outline and background */
+  .Tab[data-pin="true"] .body {
+    box-shadow: 0px 0px 9px #00000030 !important;
+    border: 1px solid var(--s-frame-bg) !important;
+    background-color: var(--toolbar-bg) !important;
+  }
+  .Tab[data-pin="true"] .body:hover {
+    background-color: rgba(var(--custom-fg), 0.1) !important;
+  }
+
+  /* selected tab outline */
+  .Tab[data-pin="true"][data-active="true"] .body {
+    border: 1px solid rgba(var(--custom-fg), 0.5) !important;
+    background-color: rgba(var(--custom-pr), 0.2) !important;
+  }
+
+  /* remove bottom margin */
+  .PinnedTabsBar {
+    margin-bottom: 0px !important;
+  }
+
+  /* TABS */
+
+  .Tab .body {
+    transition: 0.2s ease-in-out !important;
+  }
+
+  /* OTHER */
+
+  /* consistent navbar background */
+  #nav_bar {
+    background-color: transparent !important;
+  }
+
+  .fav::after {
+    content: "" !important;
+    position: absolute !important;
+    z-index: -999 !important;
+
+    border-radius: 5px !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    background-color: rgba(80, 80, 80, 0.2) !important;
+  }
+
+  /* remove padding on top */
+  #nav_bar {
+    padding-top: 0px !important;
+  }
+
+  /* popup */
+  .popup {
+    margin: 6px !important;
+  }
+  .popup-container {
+    background-color: transparent !important;
+  }
+
+  /* search */
+  #search_bar {
+    margin: 4px !important;
+  }
+
+  .top-horizontal-box {
+    margin-top: 4px !important;
+  }
+}

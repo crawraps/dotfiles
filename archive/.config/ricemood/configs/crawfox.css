@@ -1,0 +1,371 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap");
+#crawfox {
+  --crawfox-primary: ^r@pr#rgb^;
+  --crawfox-transparent: transparent;
+  --crawfox-alpha: 0.5;
+  --crawfox-bg: 0, 0, 0;
+  --crawfox-radius: 12px;
+  --crawfox-tab-bg: 0, 0, 0;
+}
+
+#titlebar {
+  display: none;
+}
+
+#main-window {
+  background: var(--crawraps-main-window) !important;
+  appearance: var(--crawraps-moz-appearance) !important;
+  -moz-appearance: var(--crawraps-moz-appearance) !important;
+}
+
+#customization-container {
+  background: var(--crawraps-main-window) !important;
+}
+
+#tabbrowser-tabpanels {
+  background: var(--crawraps-bg) !important;
+}
+
+#navigator-toolbox, #navigator-toolbox-background {
+  background: var(--crawraps-main-window) !important;
+  border: none !important;
+  appearance: var(--crawraps-moz-appearance) !important;
+}
+
+:root:-moz-lwtheme {
+  --focus-outline-color: rgb(var(--crawraps-primary)) !important;
+}
+
+/* Sidebar */
+#sidebar-box,
+#sidebar-box:-moz-lwtheme-darktext,
+#sidebar-box:-moz-lwtheme-brighttext {
+  --sidebar-background-color: var(--crawraps-bg) !important;
+  --sidebar-text-color: white !important;
+  background: var(--crawraps-bg) !important;
+}
+
+#sidebar,
+.sidebar-panel {
+  background: transparent !important;
+}
+
+.theme-body {
+  background: transparent !important;
+}
+
+#sidebar-box {
+  overflow: hidden;
+  background-color: var(--crawraps-bg) !important;
+  min-width: 40px !important;
+  /* 	max-width: 42px !important; */
+  max-width: 300px !important;
+  z-index: 2;
+  transition: max-width 0.3s ease-in-out;
+}
+
+#sidebar-box:hover, #sidebar-box #sidebar {
+  max-width: 300px !important;
+  z-index: 1;
+}
+
+#sidebar-box + #sidebar-splitter {
+  display: none !important;
+}
+
+/* removes sidebar header, you can change sidebar content
+with keyboard shortcuts, for example ctrl+B for bookmarks menu */
+#sidebar-box[sidebarcommand=treestyletab_piro_sakura_ne_jp-sidebar-action] #sidebar-header {
+  display: none;
+}
+
+/* removes handle used to change sidebar width, you can modify width
+when you open something else in sidebar, for example bookmarks menu */
+#sidebar-box[sidebarcommand=treestyletab_piro_sakura_ne_jp-sidebar-action] + #sidebar-splitter {
+  display: none !important;
+}
+
+#crawfox #tabbrowser-tabs {
+  display: flex;
+  background-color: rgba(var(--crawfox-bg), var(--crawfox-alpha));
+  box-sizing: border-box;
+  padding: 10px 4px;
+  width: 40px;
+  max-width: 40px;
+  padding-top: 0;
+  transition: all 0.3s ease-in-out, visibility 0s;
+}
+#crawfox #tabbrowser-tabs:hover {
+  width: 240px;
+  max-width: 240px;
+  padding: 10px;
+  padding-top: 0;
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab {
+  width: 100%;
+  height: 48px;
+  max-height: 48px;
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content {
+  padding: 2px 6px;
+  gap: 6px;
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-icon-stack {
+  height: 40%;
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-label-container {
+  opacity: 0.9;
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-background {
+  background-color: rgba(var(--crawfox-bg), 0.4);
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab[selected] .tab-stack .tab-background {
+  background-color: rgba(var(--crawfox-bg), 0.4);
+}
+#crawfox #tabbrowser-tabs:hover #tabbrowser-arrowscrollbox .tabbrowser-tab[selected] .tab-stack .tab-background .tab-context-line {
+  transform: translateX(0);
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox {
+  display: flex;
+  flex-direction: column !important;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  height: 32px;
+  max-height: 32px;
+  padding: 0;
+  min-height: 0px;
+  overflow: hidden;
+  border-radius: var(--crawfox-radius);
+  margin: 2px 0;
+  transform: translateX(0) !important;
+  transition: all 0.2s ease-in-out;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab[selected] .tab-stack .tab-background {
+  background-color: rgba(var(--crawfox-primary), var(--crawfox-alpha));
+  background-image: none;
+  outline: none;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab[selected] .tab-stack .tab-content .tab-label-container .tab-label {
+  font-weight: 600;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab:not([pinned], [fadein]) {
+  max-height: 0px;
+  height: 0px;
+  margin: 0;
+  visibility: visible;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-background {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background-color: rgba(var(--crawfox-bg), 0);
+  transition: background-color 0.2s;
+  outline: none !important;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-background .tab-context-line {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform: translateX(100%);
+  transition: 0.2s ease-in-out;
+  background: radial-gradient(circle at 100%, rgba(var(--crawfox-primary), var(--crawfox-alpha)) 1%, transparent);
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content {
+  z-index: 2;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  transition: 0.2s ease-in-out;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-icon-stack {
+  display: block;
+  height: 20px;
+  aspect-ratio: 1;
+  position: relative;
+  transition: height 0.2s ease-in-out;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-icon-stack > * {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-label-container {
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-label-container .tab-label {
+  display: block;
+  width: 100%;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: hidden;
+  font-family: "Inconsolata", monospace;
+  font-weight: 500;
+  letter-spacing: -0.75px;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-label-container .tab-secondary-label {
+  display: none;
+}
+#crawfox #tabbrowser-tabs #tabbrowser-arrowscrollbox .tabbrowser-tab .tab-stack .tab-content .tab-close-button {
+  display: none;
+}
+
+:root[inDOMFullscreen] #crawfox #tabbrowser-tabs {
+  max-width: 0px !important;
+  visibility: collapse;
+  transition: all 0.3s ease-in-out, visibility 0s 0.3s;
+}
+
+#tabbrowser-arrowscrollbox::part(scrollbutton-up),
+#tabbrowser-arrowscrollbox::part(scrollbutton-down),
+#tabbrowser-arrowscrollbox::part(overflow-start-indicator),
+#tabs-newtab-button {
+  display: none;
+}
+
+#crawfox #nav-bar {
+  background-color: rgba(var(--crawfox-bg), var(--crawfox-alpha));
+}
+#crawfox #identity-permission-box {
+  max-width: 28px;
+  overflow: hidden;
+}
+#crawfox #identity-permission-box #blocked-permissions-container {
+  display: none;
+}
+#crawfox toolbarbutton:hover,
+#crawfox toolbarbutton[open],
+#crawfox toolbarbutton[active] {
+  cursor: pointer;
+}
+#crawfox toolbarbutton:hover > *:first-child,
+#crawfox toolbarbutton[open] > *:first-child,
+#crawfox toolbarbutton[active] > *:first-child {
+  background-color: rgba(var(--crawfox-primary), 0.6);
+}
+#crawfox #save-to-pocket-button,
+#crawfox #fxa-toolbar-menu-button {
+  display: none;
+}
+#crawfox #urlbar-container {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+#crawfox #urlbar-container #urlbar {
+  height: 100%;
+  min-height: 10px;
+  position: relative;
+  top: unset;
+  left: unset;
+  background-color: rgba(var(--crawfox-primary), 0.5);
+  max-width: 700px;
+  max-height: calc(100% - 8px);
+  border-radius: 50px;
+  transition: 0.25s ease-in-out;
+}
+#crawfox #urlbar-container #urlbar[open] {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0px;
+  background-color: rgba(var(--crawfox-primary), var(--crawfox-alpha));
+}
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container {
+  padding: 0 4px;
+}
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container #identity-icon-box {
+  display: none;
+}
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container #tracking-protection-icon-container,
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container #identity-box,
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container #page-action-buttons {
+  opacity: 1;
+  max-width: 90px;
+}
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container .urlbar-input-box {
+  margin-left: 0;
+}
+#crawfox #urlbar-container #urlbar[open] #urlbar-input-container .urlbar-input-box #urlbar-input {
+  text-align: start;
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container {
+  height: 100%;
+  padding: 0;
+  transition: 0.2s ease-in-out;
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container #tracking-protection-icon-container,
+#crawfox #urlbar-container #urlbar #urlbar-input-container #identity-box,
+#crawfox #urlbar-container #urlbar #urlbar-input-container #page-action-buttons {
+  opacity: 0;
+  overflow: hidden;
+  max-width: 0px;
+  transition: 0.2s ease-in-out;
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container .urlbar-input-box {
+  margin-left: -3px;
+  transition: 0.2s ease-in-out;
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container .urlbar-input-box #urlbar-input {
+  text-align: center;
+  font-family: "Inconsolata", monospace;
+  letter-spacing: -1px;
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container .urlbar-input-box #urlbar-input::selection {
+  background-color: rgba(var(--crawfox-primary), var(--crawfox-alpha));
+}
+#crawfox #urlbar-container #urlbar #urlbar-input-container .urlbar-input-box #urlbar-input::placeholder {
+  opacity: 1;
+}
+#crawfox #urlbar-container #urlbar .urlbarView {
+  position: absolute;
+  background-color: rgba(var(--crawfox-bg), var(--crawfox-alpha));
+  backdrop-filter: blur(4px);
+}
+#crawfox #urlbar-container #urlbar .urlbarView .urlbarView-row {
+  border-radius: 0;
+  cursor: pointer;
+}
+#crawfox #urlbar-container #urlbar .urlbarView .urlbarView-row:hover {
+  background-color: rgba(var(--crawfox-primary), 0.4);
+}
+#crawfox #urlbar-container #urlbar .urlbarView .urlbarView-row[selected] {
+  background-color: rgba(var(--crawfox-primary), 0.6);
+}
+#crawfox #urlbar-container #urlbar .urlbarView .search-one-offs {
+  display: none;
+}
+#crawfox #urlbar-container #urlbar #urlbar-background {
+  display: none;
+}
+
+#crawfox #appcontent {
+  background-color: rgba(var(--crawfox-bg), var(--crawfox-alpha));
+}
+#crawfox #appcontent #tabbrowser-tabbox {
+  overflow: hidden;
+  border-top-left-radius: var(--crawfox-radius);
+}

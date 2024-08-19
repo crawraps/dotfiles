@@ -1,0 +1,10 @@
+box.run {
+  max-width: 300px;
+
+  .input-box {
+    .input {
+      border: none;
+      outline: none;
+    }
+  }
+}

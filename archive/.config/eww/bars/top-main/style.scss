@@ -1,0 +1,140 @@
+.top-main {
+  background-color: transparent;
+
+  .bar {
+    background-color: rgba($background, $transparency);
+    transition: background 0.2s 0.1s linear, margin 0.2s ease-in-out;
+
+    * {
+      font-size: 11px;
+      font-family: Cousine Nerd Font;
+      font-weight: 500;
+      color: rgba($foreground, 1);
+    }
+
+    .workspaces {
+      .workspace {
+        background: transparent;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        padding: 0px 12px;
+        border-radius: 0px;
+
+        & * {
+          text-shadow: none;
+        }
+
+        &.active {
+          background: rgba($primary, 0.9);
+          min-width: 4em;
+
+          & * {
+            color: rgba(255, 255, 255, .7);
+            text-shadow: rgba(0, 0, 0, .7) 1px 0px 1px;
+            font-weight: 800;
+          }
+        }
+      }
+    }
+
+    .clock {
+      .date {
+        padding-left: 0.625em;
+        opacity: 0;
+        transition: 0.4s linear;
+      }
+
+      &:hover {
+        .date {
+          opacity: 1;
+        }
+      }
+    }
+
+    .box {
+      padding: 0 1em;
+    }
+
+    .status {
+      padding-right: 1em;
+
+      & > * {
+        padding: 0 0.5em;
+        margin: 0 0.5em;
+      }
+    }
+
+    .workspaces,
+    .clock,
+    .status,
+    .player,
+    .tomato {
+      background-color: transparent;
+      border-radius: 0;
+      transition: background;
+      transition: background 0.3s linear, all 0.2s ease-in;
+    }
+
+    .player {
+      .icon {
+        font-size: 1.75em;
+      }
+
+      .data-box {
+        margin-left: 1em;
+        transition: opacity 0.2s linear;
+      }
+    }
+
+    .tomato {
+      .icon {
+        font-size: 1.75em;
+        margin-left: -2px;
+      }
+
+      .data-box {
+        margin-left: 1em;
+        transition: opacity 0.2s linear;
+      }
+    }
+
+    .layout {
+      .fn {
+        padding-left: 0.25em;
+      }
+    }
+
+    &.gapped {
+      background-color: transparent;
+      margin: 7px;
+      margin-bottom: 0px;
+      transition: background 0.2s linear, margin 0.2s 0.1s ease-out;
+
+      .workspaces,
+      .clock,
+      .status,
+      .player,
+      .tomato {
+        background-color: rgba($background, $transparency);
+        border-radius: 8px;
+        transition: background 0.2s linear, all 0.2s ease-in;
+      }
+
+      .tomato {
+        margin: 0 1em;
+      }
+
+      .workspaces {
+        .workspace:last-child.active {
+          border-top-right-radius: $radius;
+          border-bottom-right-radius: $radius;
+        }
+        .workspace:first-child.active {
+          border-top-left-radius: $radius;
+          border-bottom-left-radius: $radius;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+.power-menu {
+  background-color: rgba($background, 0.5);
+
+  .container {
+  }
+
+  .button {
+    background: none;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+    min-width: 40px;
+    transition: 0.2s ease-in-out;
+    padding: 0;
+    border-radius: $radius;
+    color: rgba($foreground, 0.75);
+
+    &:hover {
+      background-color: rgba($primary, .7);
+    }
+
+    .label {
+      color: rgba($foreground, 0.1);
+      
+      .key {
+        color: rgba($foreground, 1);
+        font-weight: 700;
+        border-radius: 2px;
+      }
+    }
+  }
+}

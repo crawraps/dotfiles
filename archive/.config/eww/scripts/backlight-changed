@@ -1,0 +1,35 @@
+#!python
+import threading
+import os
+import subprocess
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+script_path = os.path.join(script_dir, "backlight")
+
+changed = False
+timer = None
+process = subprocess.Popen(f"bash {script_path}", stdout=subprocess.PIPE, shell=True)
+
+def delayed():
+  global changed
+  changed = False
+  print(str(changed).lower(), flush=True)
+
+def timeout():
+  global timer
+  timer = threading.Timer(3, delayed)
+  timer.start()
+
+while True:
+  line = process.stdout.readline()
+
+  if not line:
+    break
+
+  if (not changed):
+    changed = True
+    print(str(changed).lower(), flush=True)
+    timeout()
+  else:
+    timer.cancel()
+    timeout()

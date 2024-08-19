@@ -1,0 +1,56 @@
+window {
+  margin: 0px;
+  border: none;
+  background-color: rgba(^r@bg#rgb^, .5);
+  border-radius: 8px;
+}
+
+#outer-box {
+  margin: 8px;
+  border: none;
+}
+
+#input {
+  border: none;
+  color: ^r@fg^;
+  background-color: rgba(^r@bg#rgb^, .2);
+  box-shadow: none;
+  border-radius: 3px;
+}
+
+#inner-box {
+  border: none;
+  margin: 0;
+  border-bottom: 1px solid transparent;
+}
+
+#entry:selected {
+  background-color: transparent;
+  border-bottom: 1px solid ^r@pr^;
+  outline: none;
+}
+#entry:focus {
+  outline: none;
+  border: none;
+}
+
+#entry:selected #text {
+  background-color: transparent;
+  color: ^r@pr^;
+  border: none;
+}
+
+#text {
+  margin: 5px 0;
+  border: none;
+  color: ^r@fg^;
+}
+#text:selected {
+  border: none;
+  outline: none;
+}
+
+#img {
+  opacity: 0;
+  width: 0px;
+}

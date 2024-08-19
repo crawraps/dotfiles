@@ -1,0 +1,15 @@
+backend = "thumb"
+color_space = "lab"
+threshold = 9
+palette = "dark16"
+alpha = 50
+
+[templates]
+
+kitty = { template = './templates/kitty.conf', target = '~/.config/kitty/colors.conf' }
+ags = { template = './templates/ags.scss', target = '~/.config/colors/ags.scss' }
+anyrun = { template = './templates/anyrun.css', target = '~/.config/anyrun/style.css' }
+firefox = { template = './templates/firefox.css', target = '~/.mozilla/firefox/careem/chrome/colors.css'  }
+firefoxUserContent = { template = './templates/firefox-userContent.css', target = '~/.mozilla/firefox/careem/chrome/userContent.css'  }
+obsidian = { template = './templates/obsidian.scss', target = '~/.config/colors/obsidian.scss'  }
+neovim = { template = './templates/neovim.lua', target = '~/.config/nvim/lua/crawraps/plugins/colorscheme.lua'  }

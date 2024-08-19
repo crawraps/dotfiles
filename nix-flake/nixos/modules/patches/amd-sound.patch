@@ -1,0 +1,17 @@
+diff --color -rupN linux-6.9.7/sound/soc/amd/yc/acp6x-mach.c linux-6.9.7-patched/sound/soc/amd/yc/acp6x-mach.c
+--- linux-6.9.7/sound/soc/amd/yc/acp6x-mach.c	2024-06-27 15:52:32.000000000 +0400
++++ linux-6.9.7-patched/sound/soc/amd/yc/acp6x-mach.c	2024-07-08 12:35:40.396845250 +0400
+@@ -356,6 +356,13 @@ static const struct dmi_system_id yc_acp
+ 	{
+ 		.driver_data = &acp6x_card,
+ 		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "TIMI"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Redmi G 2022"),
++		}
++	},
++	{
++		.driver_data = &acp6x_card,
++		.matches = {
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "Razer"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Blade 14 (2022) - RZ09-0427"),
+ 		}

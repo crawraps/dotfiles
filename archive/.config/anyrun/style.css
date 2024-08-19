@@ -1,0 +1,52 @@
+* {
+  color: #EC91B7;
+}
+
+#window {
+  background-color: transparent;
+}
+
+#entry {
+  background-color: rgba(26.700000000000003,17.1,24, .2);
+  color: #EC91B7;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+#entry selection {
+  background-color: rgba(228,86,145, .5);
+}
+
+#main {
+  border-radius: 8px;
+  background-color: rgba(26.700000000000003,17.1,24, .2);
+}
+
+list#plugin {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+label#match-desc {
+  font-size: 10px;
+}
+
+label#plugin {
+  font-size: 14px;
+}
+
+image#plugin {
+  opacity: 0;
+}
+
+#match {
+  padding: 1px 4px;
+}
+
+#match:selected {
+  background: rgba(228,86,145, .75);
+  border-radius: 8px;
+  margin-right: 4px;
+}

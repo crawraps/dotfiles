@@ -1,0 +1,524 @@
+#!/usr/bin/env bash
+# set -vx
+# set -x
+
+printhelp() {
+    cat <<EOM
+usage: dye [-x|-r] [color_code] "input_color"
+options:
+ -x [color_code]          hex to [color_code]
+ -r [color_code]          rgb to [color_code]
+ -h [color_code]          hsl to [color_code]
+examples:
+ dye -x rgb "#fff"
+ dye -x rgb "#ffffff"
+ dye -x rgb "#43fF6480"
+ dye -r hex "rgb(255, 255, 255)"
+ dye -r hsl "rgba(67, 255, 100, 0.8)"
+ dye -r hex "rgba(67, 255, 100, 0.5)"
+ dye -h hex "hsla(350, 100%, 100%, 1.0)"
+ dye -h rgb "hsl(350, 100, 100)"
+EOM
+    exit 0
+}
+
+########################
+# HELPER FUNCTIONS
+########################
+
+# simple error alias function (see credits below)
+error() {
+    printf "error: %s\n" "$1" 1>&2
+    exit 2
+}
+
+# range check for rgb values in parse()
+rgb_check() {
+    if [ "$1" -lt 0 ] || [ "$1" -gt 255 ] || \
+        [ "$2" -lt 0 ] || [ "$2" -gt 255 ] || \
+        [ "$3" -lt 0 ] || [ "$3" -gt 255 ]; then
+        error "invalid rgb values passed : $1, $2, $3"
+    fi
+}
+
+# range check for hsl values in parse()
+hsl_check() {
+    if [ "$1" -lt 0 ] || [ "$1" -gt 360 ] || \
+        [ "$2" -lt 0 ] || [ "$2" -gt 100 ] || \
+        [ "$3" -lt 0 ] || [ "$3" -gt 100 ]; then
+        error "invalid hsl values passed : $1 $2 $3"
+    fi
+}
+
+# for use in hex_to_hsl and rgb_to_hsl
+dec_to_float() {
+    echo "scale=8; $1 / 255" | bc -l
+}
+
+# for use in hex_to_hsl and rgb_to_hsl
+find_min_max() {
+    max=$1
+    min=$1
+    for arg in "$@"
+    do
+        if [[ "$(echo "$arg > $max" | bc -l)" -eq 1 ]]; then
+            max=$arg
+        elif [[ "$(echo "$arg < $max" | bc -l)" -eq 1 ]]; then
+            min=$arg
+        fi
+    done
+}
+
+# for use in hex_to_hsl
+calculate_saturation() {
+    local min=$1
+    local max=$2
+    local l=$3
+    # if rgb all have same values, then color is grey and saturation is 0
+    if [[ $(echo "$max == $min" | bc -l) -eq 1 ]]; then
+        printf "%.0f" 0
+    else
+        # if value (lightness) is less than 50%, then lightness is a percentage determined
+        # based off of $max and $min
+        if [[ $(echo "$l < 50" | bc -l) -eq 1 ]]; then
+            printf "%.0f" "$(echo "scale=8; (($max - $min) / ($max + $min) * 100)" | bc -l)"
+        # else a subtractive calculation is used using $max and $min to determine percentage
+        else
+            printf "%.0f" "$(echo "scale=8; (($max - $min) / (2 - $max - $min) * 100)" | bc -l)"
+        fi
+    fi
+}
+
+# for use in hex_to_hsl
+calculate_hue() {
+    local min=$1
+    local max=$2
+    # if rgb all have same values, then color is grey and lightness is 0
+    if [[ $(echo "$max == $min" | bc -l) -eq 1 ]]; then
+        printf "%.0f" 0
+    else
+        # determines which of r,g,b is predominant color and reallocates hue
+        # degree number based off of it
+        if [[ $(echo "$r == $max" | bc -l) -eq 1 ]]; then
+            printf "%.0f" "$(echo "scale=8; 60 * (($g - $b) / ($max - $min))" | bc -l)"
+        elif [[ $(echo "$g == $max" | bc -l) -eq 1 ]]; then
+            printf "%.0f" "$(echo "scale=8; 60 * (($b - $r) / ($max - $min)) + 120" | bc -l)"
+        else
+            printf "%.0f" "$(echo "scale=8; 60 * (($r -$g) / ($max - $min)) + 240" | bc -l)"
+        fi
+    fi
+}
+
+############################
+# COLOR CONVERSION FUNCTIONS
+############################
+
+# based off of Akash Mital's function (see credits below)
+hex_to_rgb() {
+    local a
+    local hex=$3
+    # null command ':' removes all leading hashtag characters
+    : "${hex/\#/}"
+    # if hex value is 8 characters
+    if ((${#_} == 8)); then
+        # convert characters to hex
+        ((r = 16#${_:0:2}, g = 16#${_:2:2}, b = 16#${_:4:2}, a = 16#${_:6:2}))
+        # simple calc for alpha channel
+        a=$(echo "scale=2; $a / 255" | bc -l)
+    # else if hex value is 6 characters (no alpha channel)
+    elif ((${#_} == 6)); then
+        ((r = 16#${_:0:2}, g = 16#${_:2:2}, b = 16#${_:4:2}))
+    # else if hex value is 3 characters (minimal hex value provided)
+    elif ((${#_} == 3)); then
+        ((r = 16#${_:0:1}${_:0:1}, g = 16#${_:1:1}${_:1:1}, b = 16#${_:2:1}${_:2:1}))
+    else
+        error "$hex is not a recognized hex color code."
+    fi
+
+    # prints final rgb(a) result
+    if [[ -n "$a" ]]; then
+        printf "%s\n" "rgba($r, $g, $b, $a)"
+    else
+        printf "%s\n" "rgb($r, $g, $b)"
+    fi
+}
+
+# converted from Garry Tan's JS function (see credits)
+hex_to_hsl() {
+    local a
+    local hex=$3
+    : "${hex/\#/}"
+
+    if ((${#_} == 8)); then
+        ((r = 16#${_:0:2}, g = 16#${_:2:2}, b = 16#${_:4:2}, a = 16#${_:6:2}))
+        a=$(printf "%.2f" "$(dec_to_float "$a")")
+    elif ((${#_} == 6)); then
+        ((r = 16#${_:0:2}, g = 16#${_:2:2}, b = 16#${_:4:2}))
+    elif ((${#_} == 3)); then
+        ((r = 16#${_:0:1}, g = 16#${_:1:1}, b = 16#${_:2:1}))
+        # if only 3 hex code characters are passed, shift rgb by BASE 16
+        r=$((r * 16 + r))
+        g=$((g * 16 + g))
+        b=$((b * 16 + b))
+    else
+        error "$hex is not a recognized hex color code."
+    fi
+
+    r=$(dec_to_float "$r")
+    g=$(dec_to_float "$g")
+    b=$(dec_to_float "$b")
+
+    find_min_max "$r" "$g" "$b"
+
+    # lightness is calculated as a percentage between max and min values of rgb
+    l=$(printf "%.0f" "$(echo "scale=8; (($max + $min) / 2 * 100)" | bc -l)")
+    # saturation is then calculated based off of $min/$max/$l values
+    s=$(calculate_saturation "$min" "$max" "$l")
+    # hue is calculated based off of $min/$max values
+    h=$(calculate_hue "$min" "$max")
+
+    # h is added 360 degrees if a negative value is passed
+    if [[ $(echo "$h < 0" | bc -l) -eq 1 ]]; then
+        h=$(echo "scale=8; $h + 360" | bc -l)
+    fi
+
+    # prints final hsl(a) result
+    if [[ -n "$a" ]]; then
+        printf "%s\n" "hsla($h, $s%, $l%, $a)"
+    else
+        printf "%s\n" "hsla($h, $s%, $l%)"
+    fi
+}
+
+# based off of Akash Mital's function (see credits below)
+rgb_to_hex() {
+    local a
+    if [[ -n "$4" ]]; then
+        # converts alpha channel to hex (see below) by passing $4 as float to decimal
+        a=$(printf "%02x\n" "$(echo "scale=2; $4*255" | bc -l)" 2>/dev/null)
+        # pads hex value with leading 0s
+        printf "#%02x%02x%02x%s\n" "$1" "$2" "$3" "$a"
+    else
+        # pads hex value with leading 0s
+        printf "#%02x%02x%02x\n" "$1" "$2" "$3"
+    fi
+}
+
+# converted from Garry Tan's JS function (see credits)
+rgb_to_hsl() {
+
+    r=$(dec_to_float "$1")
+    g=$(dec_to_float "$2")
+    b=$(dec_to_float "$3")
+
+    find_min_max "$r" "$g" "$b"
+
+    # initial hue/saturation/lightness values are equivalent to $min+$max/2
+    h=$(echo "scale=8; ($max + $min) / 2" | bc -l)
+    s=$(echo "scale=8; ($max + $min) / 2" | bc -l)
+    l=$(echo "scale=8; ($max + $min) / 2" | bc -l)
+
+    # if $min and $max are equal,, then color is greyscale, and only lightness
+    # value is needed
+    if (( $(echo "$min $max" | awk '{print ($1 == $2)}') )); then
+        h=0
+        s=0
+        l="$(echo "scale=8; $max + $min" | bc -l)"
+    else
+        #calculate difference between max and min
+        d="$(echo "scale=8; $max - $min" | bc -l)"
+
+        # calculate hue (not the same as calculate_hue func in hex_to_hsl)
+        # if red is predominant hue in find_min_max
+        if (( $(echo "$max $r" | awk '{print ($1 == $2)}') )); then
+            h=$(echo "scale=8; ($g - $b) / $d" | bc -l)
+            # then if g is less than b
+            if (( $(echo "$g $b" | awk '{print ($1 < $2)}') )); then
+                h=$(echo "scale=8; $h + 6" | bc -l)
+            fi
+        # if green is predominant hue in find_min_max
+        elif (( $(echo "$max $g" | awk '{print ($1 == $2)}') )); then
+            h=$(echo "scale=8; ($b - $r) / $d + 2" | bc -l)
+        # if blue is predominant hue in find_min_max
+        else
+            h=$(echo "scale=8; ($r - $g) / $d + 4" | bc -l)
+        fi
+
+        h=$(echo "scale=8; $h / 6" | bc -l)
+
+        # calculate saturation (not the same as calculate_saturation func in hex_to_hsl)
+        if (( $(echo "$l 0.5" | awk '{print ($1 > $2)}') )); then
+            s=$(echo "scale=8; $d / (2 - $max - $min)" | bc -l)
+        else
+            s=$(echo "scale=8; $d / ($max + $min)" | bc -l)
+        fi
+
+        # calculate lightness
+        l=$(echo "scale=8; ($max + $min) / 2" | bc -l)
+    fi
+
+    # convert back to 360 color wheel values
+    h=$(printf "%.0f" "$(echo "$h * 360" | bc -l)")
+    s=$(printf "%.0f" "$(echo "$s * 100" | bc -l)")
+    l=$(printf "%.0f" "$(echo "$l * 100" | bc -l)")
+
+    # clamp the results between 0 and max values
+    h=$(echo "$h" | awk '{print ($1 > 360 ? 360 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+    s=$(echo "$s" | awk '{print ($1 > 100 ? 100 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+    l=$(echo "$l" | awk '{print ($1 > 100 ? 100 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+
+    # if a fourth arg is provided (alpha channel)
+    if [[ -n "$4" ]]; then
+        a="$4"
+        if [[ $(echo "scale=2; $a > 1" | bc -l) -eq 1 ]]; then
+            error "alpha channel cannot be greater than 1.0"
+        fi
+    else
+        a=""
+    fi
+
+    # print out final values
+    if [[ -n "$a" ]]; then
+        printf "%s\n" "hsla($h, $s%, $l%, $a)"
+    else
+        printf "%s\n" "hsla($h, $s%, $l%)"
+    fi
+}
+
+# helper function used to determine rgba values in hsl_to_rgb
+hue_to_rgb() {
+    # p=mid, q=chroma, t=hue
+    local p=$1
+    local q=$2
+    local t=$3
+
+    # keeps value of hue between 0 and 1
+    if [[ $(echo "$t < 0" | bc -l) -eq 1 ]]; then
+        t=$(echo "scale=8; $t + 1" | bc -l)
+    fi
+    if [[ $(echo "$t > 1" | bc -l) -eq 1 ]]; then
+        t=$(echo "scale=8; $t - 1" | bc -l)
+    fi
+
+    # depending on calculation of hue in hsl_to_rgb, $p is returned as value for
+    # r,g,b based off of calculated angle of $t
+    if [[ $(echo "$t <= 1 / 6" | bc -l) -eq 1 ]]; then
+        p=$(echo "scale=8; $p + ($q - $p) * 6 * $t" | bc -l)
+        echo "$p"
+        exit 0
+    elif [[ $(echo "$t < 1 / 2" | bc -l) -eq 1 ]]; then
+        p=$q
+        echo "$p"
+        exit 0
+    elif [[ $(echo "$t < 2 / 3" | bc -l) -eq 1 ]]; then
+        p=$(echo "scale=8; $p + ($q - $p) * (2 / 3 - $t) * 6" | bc -l)
+        echo "$p"
+        exit 0
+    fi
+
+    echo "$p"
+}
+
+hsl_to_rgb() {
+    local h s l r g b
+    # hue is the remainder of initial hue value divided by 360
+    h=$(awk "BEGIN { print int($1) % 360 }")
+    # keep the saturation between 0 -100
+    s="$((($2 > 100 ? 100 : $2 < 0 ? 0 : $2)))"
+    l="$((($3 > 100 ? 100 : $3 < 0 ? 0 : $3)))"
+    # convert all values to between 0 - 1
+    h=$(echo "scale=6; $h / 360" | bc -l)
+    s=$(echo "scale=6; $s / 100" | bc -l)
+    l=$(echo "scale=6; $l / 100" | bc -l)
+
+    # if a fourth arg is provided (alpha channel)
+    if [[ -n "$4" ]]; then
+        a=$4
+        if [[ $(echo "scale=2; $a > 1" | bc -l) -eq 1 ]]; then
+            error "alpha channel cannot be greater than 1.0"
+        fi
+    fi
+
+    # color is grey and all three rgb values should be equal to the original
+    # lightness value
+    if [[ $2 -eq 0 ]]; then
+        r=$3
+        g=$3
+        b=$3
+        if [[ -n "$a" ]]; then
+            printf "%s\n" "rgba($r, $g, $b, $a)"
+        else
+            printf "%s\n" "rgb($r, $g, $b)"
+        fi
+        exit 0
+    else
+        local q p
+        # determine chroma value based off of lightness value
+        if (( $(echo "$l 0.5" | awk '{print ($1 < $2)}') )); then
+            q=$(echo "scale=8; $l * (1 + $s)" | bc -l)
+        else
+            q=$(echo "scale=8; $l + $s - $l * $s" | bc -l)
+        fi
+
+        # mid is calculated based off of lightness and chroma values
+        p=$(echo "scale=6; 2 * $l - $q" | bc -l)
+        # determines r,g,b values based off of hue's orientation to 360 degree color wheel
+        r=$(hue_to_rgb "$p" "$q" "$(echo "$h" | awk '{print $1 + (1 / 3)}')")
+        g=$(hue_to_rgb "$p" "$q" "$h")
+        b=$(hue_to_rgb "$p" "$q" "$(echo "$h" | awk '{print $1 - (1 / 3)}')")
+    fi
+
+    # convert final returned values from hue_to_rgb into full rgb codes by * 255
+    r="$(printf "%.0f" "$(echo "scale=6; $r * 255" | bc -l)")"
+    g="$(printf "%.0f" "$(echo "scale=6; $g * 255" | bc -l)")"
+    b="$(printf "%.0f" "$(echo "scale=6; $b * 255" | bc -l)")"
+
+    # clamp the results between 0 and 255 values
+    r=$(echo "$r" | awk '{print ($1 > 255 ? 255 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+    g=$(echo "$g" | awk '{print ($1 > 255 ? 255 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+    b=$(echo "$b" | awk '{print ($1 > 255 ? 255 : $1 < 0 ? 0 : $1)}' | xargs printf "%d")
+
+    # print out final results
+    if [[ -n "$a" ]]; then
+        printf "%s\n" "rgba($r, $g, $b, $a)"
+    else
+        printf "%s\n" "rgb($r, $g, $b)"
+    fi
+}
+
+# since i have these already...
+# and since hsl needs to be converted to rgb before hex almost inherently...
+hsl_to_hex() {
+    rgb_code="$(hsl_to_rgb "$@")"
+    parse_args "-r" "hex" "$rgb_code"
+}
+
+# parses out either rgb() or hsl() color strings into numeric values
+# then passes them to the appropriate color conversion functions
+parse_args() {
+    local orig_color=$1
+    local color_to_conv=$2
+    local passed_color_code=$3
+    local accepted_colors=( "rgb"  "hex" "hsl" )
+
+    # check if passed color code exists in accepted_colors array
+    if [[ ! "${accepted_colors[*]}" =~ ${color_to_conv} ]]; then
+        error "$color_to_conv is not an accepted color format"
+    fi
+
+    # converting from hsl
+    if [[ "$orig_color" == "-h" ]]; then
+        local numbers
+        local regex='\s*hsl[a]?[(][^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}[%]?, [^*][0-9]{1,3}[%]?[)]|hsl[a]?[(][^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}[%]?, [^"]*[0-9]{1,3}[%]?, [^"]*[0-1]?.[0-9][0-9]?[)]\s*'
+        # parses out actual numbers and palces them into an array called hsl
+        numbers=$(echo "$passed_color_code" | sed -n 's/.*\(([^()]*)\).*/\1/p' | sed 's/[()]//g' | sed 's/,\s/ /g' | sed 's/%//g')
+        read -r -a hsl <<< "$numbers"
+        # checks if hsl numbers are within proper ranges (0-360, 0-100, 0-100)
+        hsl_check "${hsl[$"0"]}" "${hsl[$"1"]}" "${hsl[$"2"]}" "${hsl[$"3"]}"
+    if [[ $passed_color_code =~ $regex ]]; then
+        # calls color conversion functions with parsed number codes
+        if [[ $color_to_conv == "rgb" ]]; then
+            hsl_to_rgb  "${hsl[$"0"]}" "${hsl[$"1"]}" "${hsl[$"2"]}" "${hsl[$"3"]}"
+        elif [[ $color_to_conv == "hex" ]]; then
+            hsl_to_hex  "${hsl[$"0"]}" "${hsl[$"1"]}" "${hsl[$"2"]}" "${hsl[$"3"]}"
+        fi
+    else
+        error "$passed_color_code is not a recognized hsla code"
+    fi
+
+    # converting from rgb
+    elif [[ "$orig_color" == "-r" ]]; then
+        local numbers
+        local regex='\s*rgb[a]?[(][^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}[)]|rgb[a]?[(][^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}, [^"]*[0-9]{1,3}, [^"]*[0-1]?.[0-9][0-9]?[)]\s*'
+        numbers=$(echo "$passed_color_code" | sed -n 's/.*\(([^()]*)\).*/\1/p' | sed 's/[()]//g' | sed 's/,\s/ /g')
+        read -r -a rgb <<< "$numbers"
+        # checks if rgb numbers are within proper ranges (0-255, 0-255, 0-255)
+        rgb_check "${rgb[$"0"]}" "${rgb[$"1"]}" "${rgb[$"2"]}" "${rgb[$"3"]}"
+        if [[ $passed_color_code =~ $regex ]]; then
+            if [[ $color_to_conv == "hex" ]]; then
+                rgb_to_hex  "${rgb[$"0"]}" "${rgb[$"1"]}" "${rgb[$"2"]}" "${rgb[$"3"]}"
+            elif [[ $color_to_conv == "hsl" ]]; then
+                rgb_to_hsl  "${rgb[$"0"]}" "${rgb[$"1"]}" "${rgb[$"2"]}" "${rgb[$"3"]}"
+            fi
+        else
+            printf "%s\n" "${rgb[@]}"
+            error "$passed_color_code is not a recognized rgba code"
+        fi
+    fi
+}
+
+########################
+# MAIN ROUTINE
+########################
+
+main() {
+    [[ "$#" -lt 1 ]] && printhelp
+
+    while getopts ":x:r:h:?" arg; do
+        case $arg in
+            x)
+                if [[ "$2" == "rgb" ]]; then
+                    local rgbval
+                    rgbval=$(hex_to_rgb "$@")
+                    printf "%s\n" "$rgbval"
+                elif [[ "$2" == "hsl" ]]; then
+                    local hslval
+                    hslval=$(hex_to_hsl "$@")
+                    printf "%s\n" "$hslval"
+                fi
+                ;;
+            r)
+                if [[ "$2" == "hex" ]]; then
+                    local hexval
+                    hexval=$(parse_args "$@")
+                    printf "%s\n" "$hexval"
+                elif [[ "$2" == "hsl" ]]; then
+                    local hslval
+                    hslval=$(parse_args "$@")
+                    printf "%s\n" "$hslval"
+                fi
+                ;;
+            h)
+                if [[ "$2" == "hex" ]]; then
+                    local hexval
+                    hexval=$(parse_args "$@")
+                    printf "%s\n" "$hexval"
+                elif [[ "$2" == "rgb" ]]; then
+                    local rgbval
+                    rgbval=$(parse_args "$@")
+                    printf "%s\n" "$rgbval"
+                fi
+                ;;
+            ?)
+                printhelp
+                ;;
+        esac
+    done
+}
+
+main "$@"
+
+# Credits:
+# Thanks go out to those who helped:
+
+# Akash Mittal, whose article provided the original versions of hex_to_rgb() and rgb_to_hex() taken from
+# https://akashmittal.com/code-example-convert-hex-color-to-rgb-rgb-to-hex-using-bash-script/
+
+# Garry Tan, who provided the JavaScript version of hsl_to_rgb
+# https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
+
+# Redditor zeekar who broke down what those functions did line by line:
+# https://reddit.com/r/bash/comments/zqmvz8/rgbhex_converter_syntax_how_does_this_work/
+
+# Redditor ProfessorChaos112 who provided an alternative rgb_to_hsl function,
+# although not implemented here, it provided more checks and balances for hue
+# degree determination
+# https://reddit.com/r/bash/comments/zut4nw/converting_hsl_to_rgb_in_bash/
+
+# tomocafe on github provided the error handling function and install script
+# https://github.com/tomocafe
+
+# Redditor DyslexicHobo, who suggested ChatGPT, which I used to finalize the
+# rgb_to_hex() function. Thank you AI overlords!
+# https://openai.com/blog/chatgpt/
+

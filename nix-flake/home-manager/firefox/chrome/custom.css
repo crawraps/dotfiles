@@ -1,0 +1,35 @@
+#browser {
+  background-color: var(--custom-background);
+}
+
+#tabbrowser-tabpanels, #panel-1-1 {
+  background-color: transparent !important;
+}
+
+#urlbar-container {
+  /* center url bar */
+  /*                  sidebar width      icons left */
+  margin-left: calc(-250px + 36px * (3 - 0) + 45px) !important;
+  /*                                 ^ icons right */
+}
+
+#urlbar-background {
+  background-color: var(--urlbar) !important;
+  border: none !important;
+}
+#urlbar[breakout-extend] #urlbar-background {
+  background-color: var(--color-gray-80) !important;
+}
+
+.titlebar-button.titlebar-close {
+  display: none;
+}
+
+:root {
+  --tabpanel-background-color: transparent;
+  background: transparent;
+}
+
+#webextpanels-window {
+  background: transparent !important;
+}

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BACKLIGHT_STATUS=`find -L /sys/class/backlight -maxdepth 2 -type f -name brightness 2> /dev/null`
+CURRENT_BACKLIGHT="/sys/class/backlight/amdgpu_bl1"
+
+while true; do
+  #brightness=`brightnessctl | grep -o '(.*)' | grep -o '[0-9]*'`
+  actual_brightness=`cat $CURRENT_BACKLIGHT/actual_brightness`
+  max_brightness=`cat $CURRENT_BACKLIGHT/max_brightness`
+
+  percentage=$((($actual_brightness*100+$max_brightness/2)/$max_brightness))
+
+  echo $percentage
+  inotifywait -q -e create,modify $CURRENT_BACKLIGHT/actual_brightness > /dev/null
+done

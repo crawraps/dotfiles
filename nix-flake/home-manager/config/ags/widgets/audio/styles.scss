@@ -1,0 +1,15 @@
+.audio {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+  text-shadow: none;
+  color: $foreground;
+
+  .icon {
+    margin-bottom: 1px;
+    font-size: 1.6em;
+  }
+}

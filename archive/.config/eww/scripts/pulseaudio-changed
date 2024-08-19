@@ -1,0 +1,31 @@
+#!python
+import threading
+import subprocess
+
+changed = False
+timer = None
+process = subprocess.Popen('pactl subscribe | grep --line-buffered "sink"', stdout=subprocess.PIPE, shell=True)
+
+def delayed():
+  global changed
+  changed = False
+  print(str(changed).lower(), flush=True)
+
+def timeout():
+  global timer
+  timer = threading.Timer(3, delayed)
+  timer.start()
+
+while True:
+  line = process.stdout.readline()
+
+  if not line:
+    break
+
+  if (not changed):
+    changed = True
+    print(str(changed).lower(), flush=True)
+    timeout()
+  else:
+    timer.cancel()
+    timeout()

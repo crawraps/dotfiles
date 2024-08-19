@@ -1,0 +1,64 @@
+box.notifications {
+  padding: 10px;
+
+  .notification {
+    border-radius: 10px;
+    padding: .625em;
+    background-color: rgba($background, $transparency);
+
+    &.critical {
+      background-color: rgba(lightcoral, $transparency);
+    }
+
+    .icon {
+      min-width: 42px;
+      min-height: 42px;
+      margin-right: 1em;
+
+      image {
+        font-size: 24px;
+        /* to center the icon */
+        margin: 8px;
+        color: $foreground;
+      }
+
+      box {
+        min-width: 42px;
+        min-height: 42px;
+        border-radius: 7px;
+      }
+    }
+
+    .title {
+      color: $foreground;
+      font-family: Comfortaa;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .body {
+      color: $foreground;
+      font-size: 14px;
+      font-family: Roboto;
+      font-weight: 400;
+    }
+
+    .actions {
+      margin-top: 12px;
+
+      .action-button {
+        background: rgba($primary, 0.2);
+        border-radius: 10px;
+        padding: 4px 6px;
+
+        label {
+          color: $foreground;
+          font-size: 14px;
+          text-shadow: none;
+          font-family: Roboto;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}

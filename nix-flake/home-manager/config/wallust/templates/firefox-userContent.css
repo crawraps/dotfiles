@@ -1,0 +1,24 @@
+@import url("ShyFox/content.css");
+
+:root {
+  --shy-color: {{ color12 }};
+  --urlbar: rgba({{ color12 | rgb }}, .5);
+  --custom-background: rgba({{ background | rgb }}, .5);
+  --custom-foreground: {{ foreground }};
+
+  --themed-primary: {{ color12 | rgb }};
+  --themed-secondary: {{ color6 | rgb }};
+  --themed-foreground: {{ foreground | rgb }};
+  --themed-background: {{ background | rgb }};
+
+  --tr-col: rgba(66, 65, 77, 0.4);
+  --tr-hov-col: rgba(86, 85, 97, 0.4);
+  --tr-dark-col: rgba(36, 35, 47, 0.4);
+  --tr-light-col: rgba(140, 140, 150, 0.4);
+
+  --rounding: 11.5px;
+  --big-rounding: 15px;
+  --giant-rounding: 30px;
+
+  --blur-radius: 10px;
+}

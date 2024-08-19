@@ -1,0 +1,12 @@
+@import '../../colors/ags.scss', '../widgets/network/styles', '../widgets/ram/styles', '../widgets/cpu/styles', '../widgets/backlight/styles.scss',
+  '../widgets/audio/styles.scss', '../widgets/battery/styles.scss', '../widgets/time/styles.scss', '../widgets/slider/styles.scss', '../widgets/workspaces/styles.scss',
+  '../widgets/player/styles.scss', '../windows/topbar/styles', '../windows/sliders/styles', '../windows/power-menu/styles', '../windows/notifications/styles.scss';
+
+window {
+  background-color: transparent;
+  color: $foreground;
+}
+
+* {
+  font-family: Kode Mono;
+}

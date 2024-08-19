@@ -1,0 +1,26 @@
+.workspaces {
+  .inner-container {
+    .workspace {
+      background: none;
+      color: $foreground;
+      box-shadow: none;
+      border: none;
+      background-color: transparent;
+      min-width: 40px;
+      transition: 0.2s ease-in-out;
+
+      &.active {
+        background-color: rgba($primary, 0.8);
+        border-radius: 0;
+        min-width: 80px;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        font-weight: 800;
+        color: white;
+      }
+    }
+  }
+}
+
+.gapped .workspaces .inner-container .workspace.active {
+  border-radius: $radius;
+}

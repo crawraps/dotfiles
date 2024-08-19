@@ -1,0 +1,4 @@
+alias c="clear"
+alias cl="clear"
+alias mkdir="mkdir -p"
+alias ssh="kitty +kitten ssh"

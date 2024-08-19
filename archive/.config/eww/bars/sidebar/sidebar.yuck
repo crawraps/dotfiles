@@ -1,0 +1,34 @@
+(include 'bars/sidebar/sound.yuck')
+(include 'bars/sidebar/brightness.yuck')
+
+(defvar sidebar-hovered false)
+
+(defwindow sidebar
+  :monitor 0
+  :stacking 'fg'
+  :exclusive true
+  :geometry (geometry
+    :x 0
+    :y '200px'
+    :width '50px'
+    :height '400px'
+    :anchor 'top right'
+  )
+
+  (eventbox
+    :onhover '${EWW_CMD} update sidebar-hovered=true'
+    :onhoverlost '${EWW_CMD} update sidebar-hovered=false'
+
+    (box
+      :orientation 'h'
+
+      (brightnessbar
+        :hovered sidebar-hovered
+      )
+
+      (soundbar
+        :hovered sidebar-hovered
+      )
+    )
+  )
+)

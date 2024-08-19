@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+function apply-wallpaper {
+  swww_pid=`pgrep -f 'swww-daemon'`
+  if [[ -z $swww_pid ]]; then
+    nohup swww-daemon &> /dev/null &
+    sleep 0.2;
+  fi
+
+  swww img --transition-step 6 --transition-fps=165 $1
+  wallust -q -s run $1
+
+  # reset kitty colors
+  kitty_pid=`pgrep -f 'kitty -1'`; [[ ! -z $kitty_pid ]] && kitty @ --to unix:@kitty-$kitty_pid set-colors --all --configured $XDG_CONFIG_HOME/kitty/colors.conf
+
+  # reapply ags styles
+  ags_css=$CACHE/ags/styles/index.css
+  dart-sass $XDG_CONFIG_HOME/ags/styles/index.scss $ags_css && ags -r "App.applyCss('$ags_css')" > /dev/null
+
+  # obsidian vault specific path. Obsidian live update not working with symlinks
+  dart-sass --no-source-map $XDG_CONFIG_HOME/colors/obsidian.scss ~/documents/notes/.obsidian/snippets/crawraps.css
+
+  # send reload command to nvim with kitten
+  sleep 2;
+  kitten @ send-text -m '(title:v or title:nvim) and not state:focused ' '\r:Lazy reload nvim\r\r:colorscheme catppuccin\r'
+}
+
+wallpapers_dir="$WALLPAPERS"
+random=false
+
+function print-usage {
+  echo "Usage: paper [options] [wallpaper]"
+  echo "  -r: select random wallpaper. If no wallpaper is specified, this flag is true"
+  echo "  -g: search in specific group. All groups included by default"
+  echo "  -l: list available wallpapers"
+  echo "  -p: list available groups"
+  echo "  -h: print this message"
+  echo "  -f: set file as wallpaper"
+}
+
+function get-name {
+  local filename=$(basename $1)
+  echo ${filename%.*}
+}
+
+function list-wallpapers {
+  find -L $wallpapers_dir -type f -exec sh -c 'basename `printf "%s " "${0%.*}"`' {} ';'
+}
+
+function list-groups {
+  find -L $wallpapers_dir -mindepth 1 -maxdepth 1 -type d -exec basename {} ';'
+}
+
+while getopts 'rg:lphf:' flag; do
+  case "${flag}" in
+    r) random=true ;;
+    g) wallpapers_dir="$WALLPAPERS/${OPTARG}" ;;
+    l) list-wallpapers; exit 0 ;;
+    p) list-groups; exit 0 ;;
+    f) apply-wallpaper $OPTARG
+       exit 0 ;;
+    h) print-usage
+       exit 0 ;;
+    *) print-usage
+       exit 1 ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+random_image=$(find -L $wallpapers_dir -type f | shuf -n 1)
+
+if [ -z $1 ]; then
+  apply-wallpaper $random_image
+else
+  if [ $random = true ]; then
+    apply-wallpaper $random_image
+  else
+    wallpaper=$(find -L $wallpapers_dir -type f -name "$1.*")
+
+    if [ -z $wallpaper ]; then
+      echo "No such wallpaper. List available wallpapers with -l flag"
+      exit 1
+    fi
+
+    apply-wallpaper $(readlink -f $wallpaper)
+  fi
+fi

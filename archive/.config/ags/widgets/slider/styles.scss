@@ -1,0 +1,38 @@
+.slider-wrapper {
+  background: rgba($background, $transparency);
+  border-radius: $radius;
+
+  .slider {
+    padding: 10px 0 0 0;
+
+    slider {
+      background: transparent;
+      outline-color: transparent;
+      border-color: transparent;
+      color: transparent;
+      box-shadow: none;
+    }
+
+    highlight {
+      background-color: $primary;
+      border: none;
+      transition: 0.1s;
+    }
+  }
+
+  .icon {
+    margin-bottom: 3px;
+  }
+
+  &.disabled {
+    .slider {
+      highlight {
+        background-color: desaturate($primary, 50%);
+      }
+    }
+
+    .icon {
+      color: desaturate($foreground, 50%);
+    }
+  }
+}

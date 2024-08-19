@@ -1,0 +1,52 @@
+* {
+  color: {{ foreground }};
+}
+
+#window {
+  background-color: transparent;
+}
+
+#entry {
+  background-color: rgba({{ background | rgb }}, 0.2);
+  color: {{ foreground }};
+  outline: none;
+  border: none;
+  box-shadow: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+#entry selection {
+  background-color: rgba({{ background | rgb }}, 0.2);
+}
+
+#main {
+  border-radius: 8px;
+  background-color: rgba({{ background | rgb }}, 0.2);
+}
+
+list#plugin {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+label#match-desc {
+  font-size: 10px;
+}
+
+label#plugin {
+  font-size: 14px;
+}
+
+image#plugin {
+  opacity: 0;
+}
+
+#match {
+  padding: 1px 4px;
+}
+
+#match:selected {
+  background: rgba({{ color12 | rgb }}, .75);
+  border-radius: 8px;
+  margin-right: 4px;
+}
