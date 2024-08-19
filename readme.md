@@ -1,4 +1,7 @@
+# Dotfiles
 My [NixOS](https://nixos.org) + [Hyprland](https://github.com/hyprwm/Hyprland) linux configuration.
+
+https://github.com/user-attachments/assets/a0879ec8-1f83-4517-9fe3-afce4029b15c
 
 # Repo structure
 ## archive
