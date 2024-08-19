@@ -47,6 +47,5 @@ Notes application. Obsidian can be configured with css and each obsidian vault c
 ![screen](https://github.com/user-attachments/assets/244c86bb-0f6f-4411-9626-f2e332d91e67)
 ![screen](https://github.com/user-attachments/assets/5501cec7-db5b-4f95-90b9-77db75a5bab2)
 ![screen](https://github.com/user-attachments/assets/2e46be49-7617-499a-a030-48598eadf7f3)
-![screen](https://github.com/user-attachments/assets/244c86bb-0f6f-4411-9626-f2e332d91e67)
+![screen](https://github.com/user-attachments/assets/c9ad746f-8038-4f8d-95a8-f8f912b28801)
 ![screen](https://github.com/user-attachments/assets/c4269f78-5687-4368-8f1b-32a3cf9728b7)
-
