@@ -39,3 +39,15 @@ Notes application. Obsidian can be configured with css and each obsidian vault c
 - [wallust](https://codeberg.org/explosion-mental/wallust) - pywal alternative written on Rust
 - [swww](https://github.com/LGFae/swww) - wallpaper daemon
 - [neovim](https://github.com/neovim/neovim) - text editor. Themed colors are generated in `nvim/lua/crawraps/plugins/colorscheme.lua` by wallust.
+
+## Gallery
+![screen](https://github.com/user-attachments/assets/4f1c1336-d100-4761-ac9f-6f06cde30328)
+![screen](https://github.com/user-attachments/assets/6fd6566f-820c-49bd-b372-a98861b47ea9)
+![screen](https://github.com/user-attachments/assets/d13071ec-180f-46c0-845a-634a3649bc15)
+![screen](https://github.com/user-attachments/assets/2517e467-633b-459f-ac32-c286798935e2)
+![screen](https://github.com/user-attachments/assets/5501cec7-db5b-4f95-90b9-77db75a5bab2)
+![screen](https://github.com/user-attachments/assets/2e46be49-7617-499a-a030-48598eadf7f3)
+![screen](https://github.com/user-attachments/assets/244c86bb-0f6f-4411-9626-f2e332d91e67)
+![screen](https://github.com/user-attachments/assets/6feba7de-5645-41db-a85a-04ed1bdccbab)
+![screen](https://github.com/user-attachments/assets/c4269f78-5687-4368-8f1b-32a3cf9728b7)
+
