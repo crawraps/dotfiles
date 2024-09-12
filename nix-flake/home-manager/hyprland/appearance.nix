@@ -18,7 +18,7 @@
     blur = {
       enabled = true;
       size = 4;
-      passes = 4;
+      passes = 5;
       new_optimizations = true;
       noise = 0;
       brightness = 1;
