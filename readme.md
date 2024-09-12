@@ -5,7 +5,7 @@ https://github.com/user-attachments/assets/a0879ec8-1f83-4517-9fe3-afce4029b15c
 
 # Repo structure
 ## archive
-This directory contains my old configuration of Hyprland and based on ArchLinux. These files are outdated and will not be supported in the future.
+This directory contains my old configuration of Hyprland based on ArchLinux. These files are outdated and will not be supported in the future.
 
 ## nix-flake
 This is [nix flake](https://nixos.wiki/wiki/Flakes) with my current configuration. System-wide configs and per-user configs are located in nix-flake/nixos folder and in nix-flake/home-manager folder correspondingly. All following description is related only to this configuration.
