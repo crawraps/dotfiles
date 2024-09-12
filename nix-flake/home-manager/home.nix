@@ -35,6 +35,7 @@ in {
       flavours
       wallust
       obs-studio
+      hyprpicker
     ];
   };
 }

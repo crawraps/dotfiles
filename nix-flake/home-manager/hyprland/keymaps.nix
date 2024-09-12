@@ -14,6 +14,7 @@
     ", XF86MonBrightnessUp, exec, brightnessctl -d amdgpu_bl1 -s -e set 5%+"
     '', F12, exec, IMG=$GRIM_DEFAULT_DIR/$(date +%Y-%m-%d_%H-%m-%s).png && grim $IMG && wl-copy < $IMG && notify-send -u normal -t 3000 -i /home/careem/.nix-profile/share/icons/Reversal/apps/scalable/applets-screenshooter.svg "Screen captured" "New screenshot copied to clipboard and saved as $IMG"''
     ''$mod, F12, exec, IMG=$GRIM_DEFAULT_DIR/$(date +%Y-%m-%d_%H-%m-%s).png && grim -g "$(slurp)" $IMG && wl-copy < $IMG''
+    "$mod, O, exec, hyprpicker | wl-copy"
 
     # player managment
     "$mod, 60, exec, playerctl next"
