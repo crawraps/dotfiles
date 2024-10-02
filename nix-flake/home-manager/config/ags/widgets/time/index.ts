@@ -4,7 +4,7 @@ export const currentTime = Variable<Date>(new Date(), {
 
 const revealed = Variable(false)
 
-export default Widget.EventBox({
+export default () => Widget.EventBox({
   child: Widget.Box({
     children: [
       Widget.Label({

@@ -1,6 +1,6 @@
 const network = await Service.import('network')
 
-const WifiIndicator = Widget.Box({
+const WifiIndicator = () => Widget.Box({
   children: [
     Widget.Label({
       label: network.wifi.bind('ssid').as(ssid => ssid || 'Unknown'),
@@ -15,14 +15,14 @@ const WifiIndicator = Widget.Box({
   spacing: 6,
 })
 
-const WiredIndicator = Widget.Icon({
+const WiredIndicator = () => Widget.Icon({
   icon: network.wired.bind('icon_name'),
 })
 
-const NetworkIndicator = Widget.Stack({
+const NetworkIndicator = () => Widget.Stack({
   children: {
-    wifi: WifiIndicator,
-    wired: WiredIndicator,
+    wifi: WifiIndicator(),
+    wired: WiredIndicator(),
   },
   shown: network.bind('primary').as(p => p || 'wifi'),
   className: 'network',

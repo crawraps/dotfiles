@@ -17,7 +17,7 @@ export const currentPlayback = Variable(defaultPlayback, {
   ],
 })
 
-export default Widget.EventBox({
+export default () => Widget.EventBox({
   child: Widget.Box({
     children: [
       Widget.Icon({

@@ -6,7 +6,13 @@ import Run from "windows/run";
 // run `ags init` to symlink type definition
 
 App.config({
-  windows: [TopBar(), Sliders(), NotificationPopups(), Run()],
+  windows: [
+    TopBar(),
+    TopBar({ monitor: 1 }),
+    Sliders(),
+    NotificationPopups(),
+    Run(),
+  ],
   style: loadStyles(),
 });
 

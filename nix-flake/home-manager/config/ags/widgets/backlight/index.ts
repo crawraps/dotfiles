@@ -2,7 +2,7 @@ import brightness from 'scripts/backlight'
 
 export const brightnessIcons = new Array(5).fill(0).map((_, i) => `backlight-${i + 1}`)
 
-export default Widget.Box({
+export default () => Widget.Box({
   children: [
     Widget.Label({
       label: brightness.bind('screen_value').as(v => `${v}%`),

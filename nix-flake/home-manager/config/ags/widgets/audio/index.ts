@@ -7,7 +7,7 @@ export const audioIcons: [number, string][] = [
   [0, 'muted'],
 ]
 
-const Indicator = Widget.Box({
+const Indicator = () => Widget.Box({
   children: [
     Widget.Label({
       label: audio.speaker.bind('volume').as(value => Math.round(value * 100).toString() + '%'),
@@ -26,8 +26,8 @@ const Indicator = Widget.Box({
   spacing: 6,
 })
 
-export default Widget.Button({
+export default () => Widget.Button({
   on_clicked: () => (audio.speaker.is_muted = !audio.speaker.is_muted),
-  child: Indicator,
+  child: Indicator(),
   className: 'audio',
 })

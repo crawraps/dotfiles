@@ -12,7 +12,7 @@ export const cpu = Variable('0', {
   poll: [5000, 'top -bn1', out => `${getUsage(out).toFixed(2)}%`],
 })
 
-export default Widget.Box({
+export default () => Widget.Box({
   children: [
     Widget.Label({
       label: cpu.bind(),

@@ -1,6 +1,6 @@
 const battery = await Service.import('battery')
 
-export default Widget.Box({
+export default () => Widget.Box({
   children: [
     Widget.Label({
       label: battery.bind('percent').as(p => `${p}%`),

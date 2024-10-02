@@ -11,7 +11,7 @@ export const ram = Variable<string>('0 ram', {
   poll: [5000, 'free', out => `${getGib(out).toFixed(2)}Gib`],
 })
 
-export default Widget.Box({
+export default () => Widget.Box({
   children: [
     Widget.Label({
       label: ram.bind(),
