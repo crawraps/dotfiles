@@ -24,7 +24,7 @@ App.closeWindowDelay = {
 
 function loadStyles(): string {
   const styles = `${App.configDir}/styles/index.scss`;
-  const resolvedStyles = `/home/careem/.cache/ags/styles/index.css`;
+  const resolvedStyles = `${Utils.CACHE_DIR}/styles/index.css`
 
   Utils.exec(`dart-sass ${styles} ${resolvedStyles}`);
 

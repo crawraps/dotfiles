@@ -77,7 +77,7 @@ class BrightnessService extends Service {
 }
 
 // the singleton instance
-const service = new BrightnessService('amdgpu_bl1')
+const service = new BrightnessService('nvidia_0')
 
 // export to use in other modules
 export default service
