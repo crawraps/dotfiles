@@ -10,8 +10,8 @@
     ", XF86AudioLowerVolume, exec, pamixer -d 5"
     ", XF86AudioMute, exec, pamixer -t"
     ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
-    ", XF86MonBrightnessDown, exec, brightnessctl -d amdgpu_bl1 -s -e set 5%-"
-    ", XF86MonBrightnessUp, exec, brightnessctl -d amdgpu_bl1 -s -e set 5%+"
+    ", XF86MonBrightnessDown, exec, brightnessctl -d nvidia_0 -s -e set 5%-"
+    ", XF86MonBrightnessUp, exec, brightnessctl -d nvidia_0 -s -e set 5%+"
     '', F12, exec, IMG=$GRIM_DEFAULT_DIR/$(date +%Y-%m-%d_%H-%m-%s).png && grim $IMG && wl-copy < $IMG && notify-send -u normal -t 3000 -i /home/careem/.nix-profile/share/icons/Reversal/apps/scalable/applets-screenshooter.svg "Screen captured" "New screenshot copied to clipboard and saved as $IMG"''
     ''$mod, F12, exec, IMG=$GRIM_DEFAULT_DIR/$(date +%Y-%m-%d_%H-%m-%s).png && grim -g "$(slurp)" $IMG && wl-copy < $IMG''
     "$mod, O, exec, hyprpicker | wl-copy"
@@ -64,10 +64,15 @@
     "$mod SHIFT, $0, movetoworkspacesilent, 10"
 
     # "$mod, e, submap, power-menu"
+
+    "$mod, E, exec, workflow default"
   ];
 
   bindm = [
-    "$mod, Alt_L, resizewindow"
+    "$mod, mouse:272, movewindow"
+    "$mod, Control_L, movewindow"
+    "$mod, mouse:273, resizewindow"
+    "$mod, ALT_L, resizewindow"
   ];
 
   # power managment

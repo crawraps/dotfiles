@@ -15,6 +15,7 @@ in {
     ./wallpapers/wallpaper.nix
     ./executables/executables.nix
     ./hyprland/hyprland.nix
+    ./hyprland/plugins/plugins.nix
     ./firefox/firefox.nix
     ./config/config.nix
   ];

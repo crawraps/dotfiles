@@ -6,9 +6,14 @@
   };
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [
+  # "amdgpu"
+    "nvidia"
+  ];
 
   hardware.nvidia = {
+
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
 
     # Modesetting is required.
     modesetting.enable = true;
@@ -37,7 +42,9 @@
     nvidiaSettings = true;
 
     prime = {
-      sync.enable = true;
+      offload.enable = false;
+      sync.enable = false;
+      reverseSync.enable = false;
 
       amdgpuBusId = "PCI:7:0:0";
       nvidiaBusId = "PCI:1:0:0";

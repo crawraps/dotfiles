@@ -6,6 +6,17 @@
     "force_split" = 2;
   };
 
+  master = {
+    "no_gaps_when_only" = true;
+    "orientation" = "center";
+    "always_center_master" = true;
+    "smart_resizing" = false;
+  };
+
+  workspace = [
+    "1, layoutopt:wslayout-layout:master, monitor:HDMI-A-1, default:true, persistent:true"
+  ];
+
   windowrule = [
     "float, file_progress"
     "float, confirm"

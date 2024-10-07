@@ -1,4 +1,7 @@
-{ lib, config, ... }: {
+{ lib, config, pkgs, inputs, username, ... }:
+let
+  plugins-dir = "/home/careem/.local/share/hypr/plugins";
+in {
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -24,12 +27,19 @@
         ];
 
         exec-once = [
+          "hyprctl plugin load ${plugins-dir}/workspace-layouts.so"
           "bash -c '~/.local/bin/paper'"
         ];
 
         debug = {
           disable_logs = false;
           disable_time = false;
+        };
+
+        plugin = {
+          wslayout = {
+            default_layout = "dwindle";
+          };
         };
       }
     ];

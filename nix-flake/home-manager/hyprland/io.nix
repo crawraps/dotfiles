@@ -1,6 +1,9 @@
 {
   # monitor
-  monitor = "eDP-1,2560x1600@120.04,0x0,1.33,bitdepth,10";
+  monitor = [
+    "eDP-1,2560x1600@60,0x560,1.33"
+    "HDMI-A-1,3840x2160@60,-3072x0,1.25"
+  ];
 
   # keyboard
   input = {
