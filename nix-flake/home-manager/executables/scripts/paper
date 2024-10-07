@@ -7,7 +7,7 @@ function apply-wallpaper {
     sleep 0.2;
   fi
 
-  swww img --transition-step 6 --transition-fps=165 $1
+  swww img --transition-step 10 --transition-fps=165 $1
   wallust -q -s run $1
 
   # reset kitty colors
