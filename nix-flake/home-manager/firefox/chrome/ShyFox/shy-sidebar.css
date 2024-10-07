@@ -20,7 +20,7 @@ Styles for sidebar
 }
 
 /* if sidebar is not hidden or clean mode not enabled, this window is not floating popup and not in fullscreen video */
-#main-window:not(:is([titlepreface*="؜"], [titlepreface*="‍"]))[chromehidden=""]:not([inDOMFullscreen="true"]){
+#main-window:not(:is([titlepreface*="sidebar؜"], [titlepreface*="clean-mode"]))[chromehidden=""]:not([inDOMFullscreen="true"]){
   /* set left margin to sidebar width */
   --left-margin: var(--sdbr-wdt) !important;
 }
@@ -102,7 +102,7 @@ Styles for sidebar
 }
 
 /* padding for screenshot control buttons */
-#main-window:not([titlepreface*="؜"]):has(#screenshotsPagePanel:not([hidden])){
+#main-window:not([titlepreface*="sidebar؜"]):has(#screenshotsPagePanel:not([hidden])){
   #sidebar-box{
     padding-bottom: calc(
       var(--screenshot-tool-hgt)
@@ -119,7 +119,7 @@ Styles for sidebar
 */
 
 /* activate style when sidebar hidden or clean mode enabled (and not in customizing page) */
-#main-window:is([titlepreface*="؜"], [titlepreface*="‍"]):not([customizing]){
+#main-window:is([titlepreface*="sidebar؜"], [titlepreface*="clean-mode"]):not([customizing]){
   
   /* styles for both sidebar and bookmaarks toolbar */
   #sidebar-box,
@@ -231,7 +231,7 @@ Styles for sidebar
   }
 
   /* show sidebar on hover or focus (if not in clean mode) */
-  &:not([titlepreface*="‍"]):has(
+  &:not([titlepreface*="clean-mode"]):has(
     #sidebar-box:hover,
     #sidebar-box:focus-within,
     #PersonalToolbar:hover,
@@ -306,32 +306,6 @@ Styles when Sidebery is not opened
   fill: white !important;
 }
 
-/* notification when sidebar is not opened */
-#main-window[chromehidden=""]:has( 
-  #sidebar-box[hidden="true"]
-) {
-  --shyfox-string-open-sidebar: "Open sidebar!";
-  &[lang="ru"]{--shyfox-string-open-sidebar: "Откройте боковую панель!";}
-  
-  &::before{
-    content: var(--shyfox-string-open-sidebar);
-    position: fixed;
-    z-index: 9999;
-    
-    font-weight: bold;
-    
-    top: calc(var(--margin) + var(--toolbar-item-hgt));
-    left: calc(var(--margin) * 2);
-    
-    background-color: var(--tb-col);
-    color: var(--bt-col);
-    outline: 3px solid red;
-    
-    border-radius: var(--big-rounding);
-    padding: 10px;
-  }
-}
-
 /* styles when Sidebery is not opened but sidebar is */
 #main-window[chromehidden=""]:has(
   #sidebar-box:not([hidden]):not([sidebarcommand*="_3c078156-979c-498b-8990-85f7987dd929_-sidebar-action"]) 
@@ -345,7 +319,7 @@ Styles when Sidebery is not opened
     margin: 0 calc(var(--margin) / 1.5) !important;
   }
   
-  &[titlepreface*="؜"] {#sidebar {margin-bottom: calc(var(--margin) / 1.5) !important;}}
+  &[titlepreface*="sidebar؜"] {#sidebar {margin-bottom: calc(var(--margin) / 1.5) !important;}}
   
   #sidebar-header{
     #sidebar-close {display: none}

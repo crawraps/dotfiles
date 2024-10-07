@@ -26,6 +26,9 @@ Values of these variables can be changed safely and most likely nothing will bre
   --navbar-wdt: 60vw;
   
   --findbar-wdt: 70vw;
+
+  --navbar-height: 40px;
+  --toolbar-width: 45px;
   
   /* transparency of indicator bars showing the position of hidden panels */
   --hide-bar-opct: 0;

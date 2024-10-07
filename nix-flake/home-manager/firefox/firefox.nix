@@ -22,7 +22,7 @@ in {
           user_pref("browser.urlbar.trimHttps", true);
           user_pref("browser.urlbar.trimURLs", true);
           user_pref("widget.gtk.rounded-bottom-corners.enabled", true);
-          user_scheme("browser.tabs.allow_transparent_browser", true);
+          user_pref("browser.tabs.allow_transparent_browser", true);
         '';
       };
     };

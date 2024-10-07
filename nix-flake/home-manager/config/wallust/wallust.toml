@@ -6,10 +6,10 @@ alpha = 50
 
 [templates]
 
-kitty = { template = './templates/kitty.conf', target = '~/.config/kitty/colors.conf' }
-ags = { template = './templates/ags.scss', target = '~/.config/colors/ags.scss' }
-anyrun = { template = './templates/anyrun.css', target = '~/.config/anyrun/style.css' }
-firefox = { template = './templates/firefox.css', target = '~/.mozilla/firefox/careem/chrome/colors.css'  }
-firefoxUserContent = { template = './templates/firefox-userContent.css', target = '~/.mozilla/firefox/careem/chrome/userContent.css'  }
-obsidian = { template = './templates/obsidian.scss', target = '~/.config/colors/obsidian.scss'  }
-neovim = { template = './templates/neovim.lua', target = '~/.config/nvim/lua/crawraps/plugins/colorscheme.lua'  }
+kitty = { template = 'kitty.conf', target = '~/.config/kitty/colors.conf' }
+ags = { template = 'ags.scss', target = '~/.config/colors/ags.scss' }
+anyrun = { template = 'anyrun.css', target = '~/.config/anyrun/style.css' }
+firefox = { template = 'firefox.css', target = '~/.mozilla/firefox/careem/chrome/colors.css'  }
+firefoxUserContent = { template = 'firefox-userContent.css', target = '~/.mozilla/firefox/careem/chrome/userContent.css'  }
+obsidian = { template = 'obsidian.scss', target = '~/.config/colors/obsidian.scss'  }
+neovim = { template = 'neovim.lua', target = '~/.config/nvim/lua/crawraps/plugins/colorscheme.lua'  }
