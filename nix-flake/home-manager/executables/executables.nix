@@ -11,5 +11,11 @@
       target = ".local/bin/dye";
       executable = true;
     };
+
+    workflow = {
+      source = ./scripts/workflow;
+      target = ".local/bin/workflow";
+      executable = true;
+    };
   };
 }

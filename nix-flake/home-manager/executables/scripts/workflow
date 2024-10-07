@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+case "$1" in
+  default)
+    hyprctl dispatch workspace 1
+
+    firefox-nightly &
+    sleep 1
+    firefox-nightly --new-window 'https://music.youtube.com' &
+    sleep 1 
+    firefox-nightly --new-window 'https://chatgpt.com/' &
+    sleep 1
+    firefox-nightly --new-window 'https://web.telegram.org/k' &
+    sleep 1
+    firefox-nightly --new-window 'https://www.youtube.com/' &
+
+    sleep 1
+    hyprctl --batch "dispatch resizewindowpixel exact 600 1127,title:ChatGPT ; dispatch resizewindowpixel exact 600 600,title:YouTube Music"
+
+    exit 0 ;;
+  *)
+    echo "Usage: $0 {workflow-name}" >&2
+    exit 1 ;;
+esac
+
