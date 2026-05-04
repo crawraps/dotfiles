@@ -14,7 +14,7 @@ Declarative NixOS system configuration managed via flakes with a modular prefere
     └── ...modules
 ```
 
-## install / rebuild
+## Install / Rebuild
 
 ```bash
 # first install (from a live system)
