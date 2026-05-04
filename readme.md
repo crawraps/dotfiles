@@ -83,6 +83,23 @@ The preference key maps directly: `preferences.modules.git` → the `git` module
 | widgets | `preferences.modules.widgets` | `{ qs = bool; ags = bool; sherlock = bool; }` | `{ qs = true; ags = false; sherlock = false; }` | widget/panel selector — imports qs/ags/sherlock sub-modules |
 | file-manager | `preferences.modules.file-manager` | `bool` | `true` | file manager, disk analyzer, trash manager, etc... |
 
+## Secrets
+
+The `secrets/` directory is **gitignored** and never committed, but some modules depend on files inside it to function correctly. You must create this directory and populate the required files manually:
+
+| file | required by | description |
+|------|-------------|-------------|
+| `secrets/tailscale.key` | `network` | Tailscale auth key, referenced via `self + "/secrets/tailscale.key"` in `modules/network/system.nix` |
+
+If a module's secret file is missing, the NixOS build will fail with a path error. Create the directory and add the needed files before rebuilding:
+
+```bash
+mkdir -p secrets
+echo "tskey-auth-xxxxx" > secrets/tailscale.key
+```
+
+> **Note:** The `secrets/` directory and all `*.key` / `*.pem` / `*.env` files are excluded via `.gitignore`. Never commit credentials to this repository.
+
 ## Credits / License
 
 personal configuration — no explicit license.
