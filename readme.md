@@ -1,6 +1,6 @@
-declarative NixOS system configuration managed via flakes with a modular preferences API
+Declarative NixOS system configuration managed via flakes with a modular preferences API
 
-## structure
+## Structure
 
 ```
 .nix/
@@ -9,53 +9,9 @@ declarative NixOS system configuration managed via flakes with a modular prefere
 ├── secrets/               # sensitive keys (tailscale, etc.) gitignored
 └── modules/
     ├── configuration.nix  # system entry — imports hardware + bundle
-    ├── bundle.nix          # imports all system-level modules
-    ├── home-bundle.nix     # imports all home-manager modules
-    ├── agents/            # AI agents (ollama, claude, opencode)
-    ├── appearance/        # theming, wallpapers, wallust, fonts
-    ├── auth/              # doas (replaces sudo)
-    ├── bluetooth/         # bluetooth + optional bluetui
-    ├── bootloader/        # systemd-boot + rEFInd
-    ├── browser/           # browser modules
-    │   ├── zen/           # zen browser (twilight)
-    │   ├── firefox/       # firefox nightly
-    │   └── chromium/      # chromium
-    ├── compositor/        # wayland compositors
-    │   ├── hyprland/      # hyprland config
-    │   └── niri/          # niri config
-    ├── desktop-entries/   # xdg mime + desktop file overrides
-    ├── development/       # dev toolchain (node, cmake, etc.)
-    ├── direnv/            # direnv + nix-direnv
-    ├── docker/            # docker daemon
-    ├── email/            # thunderbird + protonmail-bridge
-    ├── environment/       # env vars + zsh
-    │   └── zsh/           # zsh aliases + variables
-    ├── git/              # git + optional lazygit
-    ├── hardware/         # auto-generated hardware scan
-    ├── kde-connect/      # kde connect + firewall
-    ├── keyboard/         # keyd (caps→alt, vim nav layer)
-    ├── ld/               # nix-ld (dynamic linker)
-    ├── locale/           # timezone + locale
-    ├── media/            # pipewire base
-    │   ├── sound/        # wiremix, mpd (optional)
-    │   └── video/        # mpv, imv, obs (optional)
-    ├── mongodb/          # mongodb-ce service
-    ├── neovim/           # neovim + neovide
-    ├── network/          # networkmanager, dns-over-tls, tailscale
-    ├── productivity/     # obsidian, workflow scripts
-    ├── screenshots/      # grim, slurp, hyprquickshot
-    ├── security/         # gpg + password-store
-    ├── system-maintenance/ # fstrim, tlp, upower, nix gc
-    ├── terminal/         # terminal modules
-    │   ├── foot/         # foot + foot server
-    │   └── kitty/        # kitty
-    ├── user/             # user account + autologin
-    ├── utilities/        # cli essentials (fd, rg, jq, etc.)
-    ├── widgets/          # widget/panel modules
-    │   ├── qs/           # quickshell (cwc)
-    │   ├── ags/          # ags
-    │   └── sherlock/     # sherlock launcher
-    └── yazi/             # yazi file manager + plugins
+    ├── bundle.nix         # imports all system-level modules
+    ├── home-bundle.nix    # imports all home-manager modules
+    └── ...modules
 ```
 
 ## install / rebuild
@@ -68,13 +24,13 @@ sudo nixos-install --flake .#nixos
 sudo nixos-rebuild switch --flake .#nixos
 ```
 
-## preferences API
+## Preferences API
 
-all configuration is driven by the `preferences` attrset in `flake.nix`. the entire attrset is passed to every module via `specialArgs`, so any module can read any preference.
+All configuration is driven by the `preferences` attrset in `flake.nix`. the entire attrset is passed to every module via `specialArgs`, so any module can read any preference.
 
-### module toggle logic
+### Module toggle logic
 
-each module reads its flag from `preferences.modules.*` and self-guards with `lib.mkIf`:
+Each module reads its flag from `preferences.modules.*` and self-guards with `lib.mkIf`:
 
 ```nix
 # example: modules/git/home.nix
@@ -88,9 +44,9 @@ lib.mkIf preferences.modules.git {
 - `false` — module is disabled
 - attrs (e.g. `{ tui = true; }`) — module is enabled with sub-options
 
-the preference key maps directly: `preferences.modules.git` → the `git` module.
+The preference key maps directly: `preferences.modules.git` → the `git` module.
 
-### module table
+### Module table
 
 | module | preference key | type | default | description |
 |--------|---------------|------|---------|-------------|
@@ -125,8 +81,8 @@ the preference key maps directly: `preferences.modules.git` → the `git` module
 | user | `preferences.modules.user` | `bool` | `true` | user account, groups, autologin |
 | utilities | `preferences.modules.utilities` | `bool` | `true` | cli essentials: fd, rg, jq, ripgrep, wl-clipboard, etc. |
 | widgets | `preferences.modules.widgets` | `{ qs = bool; ags = bool; sherlock = bool; }` | `{ qs = true; ags = false; sherlock = false; }` | widget/panel selector — imports qs/ags/sherlock sub-modules |
-| yazi | `preferences.modules.yazi` | `bool` | `true` | yazi file manager with plugins and catppuccin theme |
+| file-manager | `preferences.modules.file-manager` | `bool` | `true` | file manager, disk analyzer, trash manager, etc... |
 
-## credits / license
+## Credits / License
 
 personal configuration — no explicit license.
