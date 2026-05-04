@@ -1,0 +1,47 @@
+{
+	"opacity": 0.5,
+	"colors": {
+		"background": "{{ background }}",
+		"foreground": "{{ foreground }}",
+		"primary": "{{ color12 }}"
+	},
+	"rounding": {
+		"small": 4,
+		"medium": 10,
+		"large": 16
+	},
+	"spacing": {
+		"small": 4,
+		"medium": 8,
+		"large": 14
+	},
+	"padding": {
+		"small": 6,
+		"medium": 12,
+		"large": 24
+	},
+	"font": {
+		"family": {
+			"regular": "Kode Mono",
+			"heading": "Comfortaa",
+			"icons": "Symbols Nerd Font"
+		},
+		"size": {
+			"xs": 8,
+			"s": 9,
+			"m": 12,
+			"l": 14,
+			"xl": 16,
+			"xxl": 24,
+			"icon": 10
+		}
+	},
+	"animation": {
+		"duration": {
+			"quick": 100,
+			"normal": 200,
+			"slow": 400,
+			"sequential": 25
+		}
+	}
+}

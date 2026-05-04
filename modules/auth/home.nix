@@ -1,0 +1,1 @@
+{ lib, preferences, ... }: lib.mkIf preferences.modules.auth { }

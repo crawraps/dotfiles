@@ -1,0 +1,5 @@
+:root {
+  --cuil-background: {{ background | rgb }};
+  --cuil-primary: {{ color12 | rgb }};
+}
+

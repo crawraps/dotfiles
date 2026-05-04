@@ -1,0 +1,50 @@
+'
+        :root {
+            --background: 0, 0%, 9%;
+            --foreground: 0, 0%, 15%;
+            --text: 53, 100%, 97%;
+            --border: 0, 0%, 19%;
+
+
+            --tag-background: 180, 0%, 30%;
+            --tag-color: 220, 10%, 100%;
+            --error: 4, 71%, 62%;
+            --warning: 55, 100%, 68%;
+            --success: 140, 40%, 40%;
+
+            --weather-clear: linear-gradient(45deg, #87B2E0 0%, #CED9E5 50%);
+            --weather-few-clouds: linear-gradient(45deg, #A1A1A1 0%, #87B2E0 100%);
+            --weather-many-clouds: linear-gradient(45deg, #B2B2B2 0%, #C8C8C8 100%);
+            --weather-mist: linear-gradient(45deg, #878787 0%, #D1D1C7 100%);
+            --weather-showers: linear-gradient(45deg, #73848C 0%, #374B54 100%);
+            --weather-freezing-scattered-rain-storm: linear-gradient(45deg, #1A1C1F 0%, #242B35 100%);
+            --weather-freezing-scattered-rain: linear-gradient(45deg, #73848C 0%, #242B35 100%);
+            --weather-snow-scattered-day: linear-gradient(45deg, #73848C 0%, #242B35 100%);
+            --weather-storm: linear-gradient(45deg, #1A1C1F 0%, #242B35 100%);
+            --weather-snow-storm: linear-gradient(45deg, #1A1C1F 0%, #242B35 100%);
+            --weather-snow-scattered-storm: linear-gradient(45deg, #1A1C1F 0%, #242B35 100%);
+            --weather-showers-scattered: linear-gradient(45deg, #73848C 0%, #374B54 100%);
+
+            --weather-none-available: 0, 0%, 50%;                /* Neutral placeholder gray */
+        }
+        /*
+        --warning: 36, 89%, 52%;
+        --error: 0, 89%, 59%;
+        --success: 102, 36%, 53%;
+        */
+
+
+        overshoot *,
+        undershoot *,
+        overshoot.top,
+        overshoot.right,
+        overshoot.bottom,
+        overshoot.left undershoot.top,
+        undershoot.right,
+        undershoot.bottom,
+        undershoot.left,
+        .scroll-window>*,
+        overshoot:backdrop {
+            background: none;
+            border: none;
+            background-color: transparen

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+PID_FILE=$CACHE/work-timer.pid
+STATE_FILE=$CACHE/work-timer_state.json
+
+WORK_DURATION=$((40 * 60))
+BREAK_DURATION=$((5 * 60))
+
+function start-timer {
+echo "{\"state\": \"work\", \"start\": \"$(date +'%Y-%m-%dT%H:%M:%S%:z')\", \"duration\": $(($WORK_DURATION * 1000))}" > $STATE_FILE
+  sleep $WORK_DURATION
+
+  hyprctl dispatch submap block >> /dev/null
+  echo "User input is blocked. Take a break now."
+
+  echo "{\"state\": \"break\", \"start\": \"$(date +'%Y-%m-%dT%H:%M:%S%:z')\", \"duration\": $(($BREAK_DURATION * 1000))}" > $STATE_FILE
+  sleep $BREAK_DURATION
+
+  hyprctl dispatch submap reset >> /dev/null
+  echo "User input is unblocked. Back to work."
+
+  start-timer
+}
+
+case $1 in
+  start)
+    echo "Starting timer..."
+    echo $BASHPID > $PID_FILE
+    WORK_DURATION=$2
+    BREAK_DURATION=$3
+    start-timer;;
+  stop)
+    kill -9 $(cat $PID_FILE);
+    > $PID_FILE
+    echo '{}' > $STATE_FILE
+    hyprctl dispatch submap reset
+    exit;;
+  toggle)
+    if [ -s $PID_FILE ]; then
+      $0 stop
+    else
+      $0 start $WORK_DURATION $BREAK_DURATION
+    fi
+    exit;;
+  pid)
+    echo $(cat $PID_FILE)
+    exit;;
+esac

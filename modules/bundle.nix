@@ -1,0 +1,34 @@
+{
+  imports = [
+    ./agents
+    ./appearance
+    ./auth
+    ./bluetooth
+    ./bootloader
+    ./compositor
+    ./development
+    ./direnv
+    ./docker
+    ./email
+    ./environment
+    ./git
+    ./hardware
+    ./kde-connect
+    ./keyboard
+    ./ld
+    ./locale
+    ./media
+    ./mongodb
+    ./text-editor
+    ./network
+    ./productivity
+    ./screenshots
+    ./security
+    ./system-maintenance
+    ./terminal
+    ./user
+    ./utilities
+    ./widgets
+    ./file-manager
+  ];
+}

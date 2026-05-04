@@ -1,0 +1,394 @@
+@import "theme.css";
+
+#messengerWindow {
+  background-color: var(--cuil-background-vivid) !important;
+
+  #tabpanelcontainer {
+    background-color: transparent !important;
+  }
+}
+
+browser,
+html,
+body {
+  background-color: transparent !important;
+
+  --search-bar-background: var(--cuil-background) !important;
+  --search-bar-focus-background: var(--cuil-background-vivid) !important;
+}
+
+#spacesToolbar {
+  background-color: var(--cuil-background-vivid) !important;
+  border-right: none !important;
+  background-image: none !important;
+
+  --spaces-button-active-bg-color: var(--cuil-primary);
+}
+
+#tabmail-arrowscrollbox {
+  .tabmail-tab {
+    padding: .25em .5em !important;
+    border-radius: var(--cuil-radius) !important;
+    transition: .2s ease-out;
+
+    .tab-background {
+      background: none !important;
+
+      >.tab-line {
+        display: none !important;
+      }
+    }
+
+    label {
+      color: var(--cuil-text-dimmed) !important;
+    }
+
+    &:hover,
+    &[selected="true"] {
+      background-color: var(--cuil-background-vivid) !important;
+    }
+
+    &[selected="true"] label {
+      color: var(--cuil-text) !important;
+    }
+  }
+}
+
+input[type="search"] {
+  border: none !important;
+  border-radius: var(--cuil-radius) !important;
+  outline: none !important;
+  transition: .2s ease-out;
+}
+
+/* Folder pane */
+
+#folderPane {
+  background-color: transparent !important;
+}
+
+#folderPaneSplitter {}
+
+#folderPaneHeaderBar {
+  background-color: transparent !important;
+
+  #folderPaneWriteMessage {
+    appearance: none !important;
+    background-color: var(--cuil-background-vivid, #fff) !important;
+    border-radius: var(--cuil-radius, 0.5em) !important;
+    color: #fff !important;
+    box-shadow: 0px 0px 4px 0px var(--cuil-background-vivid, #fff) !important;
+    cursor: pointer !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(30deg,
+        var(--cuil-danger, #e74c3c) 0%,
+        var(--cuil-secondary, #af7ac5) 40%,
+        var(--cuil-primary, #c00) 60%,
+        var(--cuil-valid, #82e0aa) 100%) !important;
+    transition: all calc(0.2s * var(--cuil-animation-scale, 1)) !important;
+    background-position: 50% !important;
+    background-repeat: no-repeat !important;
+    background-size: 800% 800% !important;
+    border: none !important;
+    outline: none !important;
+    margin-top: 0.5em !important;
+    margin-bottom: 0.5em !important;
+    padding: 0.5em 1.5em !important;
+    font-family: Poppins, sans-serif !important;
+    font-size: 1em !important;
+    font-weight: 500 !important;
+    position: relative !important;
+  }
+
+  #folderPaneWriteMessage:hover,
+  #folderPaneWriteMessage:focus {
+    background-position: 70% !important;
+  }
+
+  #folderPaneWriteMessage:hover:after,
+  #folderPaneWriteMessage:focus:after {
+    background-size: 60px 60px;
+  }
+
+  #folderPaneWriteMessage:active {
+    background-size: 400% 400% !important;
+  }
+
+  #folderPaneWriteMessage:active:after {
+    opacity: 0.7;
+    background-size: 40px 40px;
+  }
+
+  #folderPaneWriteMessage[disabled] {
+    background-color: var(--cuil-background-dimmed, #565656) !important;
+    color: var(--cuil-text-dimmed, #565656) !important;
+    cursor: not-allowed !important;
+    box-shadow: 0px 0px 4px 0px var(--cuil-background-dimmed, #565656) !important;
+  }
+
+  #folderPaneWriteMessage:after {
+    content: "";
+    border-radius: var(--cuil-radius, 0.5em);
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    transition: all calc(0.2s * var(--cuil-animation-scale, 1));
+    background-image: url(https://raw.githubusercontent.com/crawraps/cuil/refs/heads/main/assets/noise.png);
+    background-position: 50%;
+    background-size: 50px 50px;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+#folderTree {
+  border-top: none !important;
+
+  --folderpane-unread-count-background: transparent !important;
+  --folderpane-unread-new-count-background: transparent !important;
+  --listbox-border-radius: var(--cuil-radius) !important;
+  --new-folder-color: var(--cuil-text-accent) !important;
+  --selected-item-color: var(--cuil-primary) !important;
+  --list-indicator-background-selected: var(--cuil-primary) !important;
+  --list-indicator-border-selected: var(--cuil-primary) !important;
+  --list-container-background-selected-current-focused: var(--cuil-background-vivd) !important;
+  --list-container-border-selected-current-focused: var(--cuil-text) !important;
+  --selected-item-text-color: transparent !important;
+
+  & li {
+    .container {
+      padding: .2em 0;
+    }
+
+    li[is="folder-tree-row"]>.container:hover {
+      border-color: transparent !important;
+      background-color: var(--cuil-background) !important;
+    }
+
+    li[is="folder-tree-row"].current>.container {
+      border-color: transparent !important;
+      background-color: var(--cuil-background-vivid) !important;
+
+      &::before {
+        background-color: var(--cuil-primary) !important;
+        border-color: var(--cuil-primary) !important;
+      }
+    }
+  }
+
+  .unread-count {
+    .new-messages>.container>& {
+      color: var(--cuil-text-accent) !important;
+    }
+  }
+
+  :is(ul, ol)[role="tree"] {
+
+    &:focus-within li.selected.current>.container,
+    & li[role="treeitem"].drop-target>.container {
+      border: none !important;
+    }
+  }
+
+  .unread-count {
+    .unread.children.collapsed:has(ul > .unread)>.container>& {
+      border: none !important;
+      color: var(--cuil-text-accent) !important;
+    }
+  }
+}
+
+#folderTree::before,
+#folderTree::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Navigation */
+#navigation-toolbox {
+  background-color: transparent !important;
+}
+
+#tabs-toolbar {
+  box-shadow: none !important;
+  background: none !important;
+  border-top: none !important;
+}
+
+unified-toolbar {
+  border-bottom: none !important;
+}
+
+/* remove close/minimize/maximize icons */
+.titlebar-buttonbox-container {
+  display: none !important;
+}
+
+#accountCentralBrowser {
+  background-color: transparent !important;
+}
+
+#accountCentral {
+  background-color: transparent !important;
+}
+
+/* Statusbar */
+#status-bar {
+  background-image: none !important;
+  background-color: var(--cuil-background) !important;
+  border: none !important;
+}
+
+/* Thread */
+
+#threadPane {
+  --tree-pane-background: transparent !important;
+}
+
+#threadPane>tree-view {
+  background: transparent !important;
+}
+
+[is="tree-view-table-body"] {
+  --new-subject-color: var(--cuil-text-accent);
+
+  &>.card-layout>td {
+    &>.card-container {
+      background: transparent !important;
+      border: none !important;
+    }
+  }
+
+  &>.card-layout {
+    &:is(:hover, :focus, :focus-within) {
+      & .card-container {
+        box-shadow: 0px 0px 4px 0px var(--cuil-background-vivid, #fff) !important;
+        background-color: var(--cuil-background) !important;
+      }
+    }
+  }
+
+  &>.card-layout.current {
+    & .card-container {
+      box-shadow: 0px 0px 4px 0px var(--cuil-background-vivid, #fff) !important;
+      background-color: var(--cuil-background-vivid) !important;
+
+      &::before {
+        background-color: var(--cuil-primary) !important;
+        border: none !important;
+      }
+    }
+  }
+}
+
+#messagePane {
+  background-color: transparent !important;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 12px;
+}
+
+#messagepanebox {
+  background-color: transparent !important;
+}
+
+#singleMessage {
+  background-color: transparent !important;
+}
+
+.header-recipient {
+  padding: 0.25em .75em !important;
+  transition: all .2s ease-out;
+  border-radius: var(--cuil-radius) !important;
+
+  &:hover {
+    background-color: var(--cuil-background-vivid) !important;
+  }
+
+  .recipient-avatar {
+    margin-right: .75em !important;
+  }
+
+  .recipient-multi-line {
+    gap: 0px !important;
+  }
+}
+
+hr {
+  height: 100%;
+  background-color: transparent;
+  border: none !important;
+}
+
+hr:hover {
+  background-color: var(--cuil-background-dimmed) !important;
+}
+
+toolbarbutton {
+  padding: .25em .75em !important;
+  border: none !important;
+  border-radius: var(--cuil-radius) !important;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--cuil-background-vivid) !important;
+  }
+}
+
+toolbarbutton toolbarbutton {
+  padding: .25em .25em !important;
+  border: none !important;
+  background-color: transparent !important;
+
+  &:hover {
+    background-color: transparent !important;
+  }
+}
+
+/* Compose */
+#msgcomposeWindow {
+  --toolbar-bgcolor: transparent !important;
+
+  body {
+    background-color: var(--cuil-background-vivid) !important;
+  }
+}
+
+#composeContentBox,
+#compose-toolbox,
+#mainPopupSet {
+  background-color: transparent !important;
+}
+
+#messageArea,
+#messageEditor {
+  background-color: transparent !important;
+}
+
+#compose-toolbox,
+#composeContentBox {
+  border-bottom: none !important;
+  box-shadow: none !important;
+
+  --toolbar-field-background-color: var(--cuil-background) !important;
+  --toolbar-field-focus-background-color: var(--cuil-background-vivid) !important;
+}
+
+.address-container,
+#msgSubject,
+.textbox-input {
+  outline: none !important;
+  border: none !important;
+}
+
+body[style="padding-bottom: 1px;"] {
+  background-color: transparent !important;
+}
+
+#mail-notification-top {
+  border-bottom: none !important;
+}

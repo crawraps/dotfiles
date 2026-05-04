@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+SCREEN=`hyprctl -j monitors | jq -r '.[] | select(.focused==true).id'`
+res=`quickshell -c cwc ipc call cwc_launcher_local toggle $SCREEN`

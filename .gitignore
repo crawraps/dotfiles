@@ -1,0 +1,25 @@
+# Secrets - never commit keys or credentials
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.env
+
+# Nix build artifacts
+result
+result-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Backup files from home-manager
+*.bak

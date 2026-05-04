@@ -1,0 +1,22 @@
+:root {
+  --cuil-radius: 0.5em;
+  --cuil-animation-scale: 1;
+
+  --cuil-primary: {{ color12 }};
+  --cuil-secondary: {{ color11 }};
+  --cuil-highlight: #fff176;
+
+  --cuil-text: {{ foreground }};
+  --cuil-text-accent: {{ color15 }};
+  --cuil-text-dimmed: #565656;
+
+  --cuil-background: rgba({{ background | rgb }}, .2);
+  --cuil-background-vivid: rgba({{ background | rgb }}, .5);
+  --cuil-background-dimmed: #555555;
+
+  --cuil-valid: #82e0aa;
+  --cuil-text-valid: #356e4d;
+
+  --cuil-danger: #e74c3c;
+  --cuil-text-danger: #e74c3c;
+}

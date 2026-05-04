@@ -1,0 +1,96 @@
+#browser {
+  background-color: var(--custom-background) !important;
+  background-image: none !important;
+}
+
+#navigator-toolbox {
+  z-index: 99999 !important;
+}
+
+#tabbrowser-tabpanels, #panel-1-1 {
+  background-color: transparent !important;
+}
+
+#urlbar-container {
+  /* center url bar */
+  /*                     sidebar width                 icons left */
+  margin-left: calc(var(--sdbr-wdt) * -1 + 36px * (3 - 0) + var(--toolbar-width)) !important;
+  /*                                               ^ icons right */
+  transition: margin-left .2s ease-in-out;
+}
+
+#urlbar-background {
+  background-color: var(--urlbar) !important;
+  border: none !important;
+}
+#urlbar[breakout-extend] #urlbar-background {
+  background-color: var(--color-gray-80) !important;
+}
+
+.titlebar-button.titlebar-close {
+  display: none;
+}
+
+:root {
+  --tabpanel-background-color: transparent;
+  background: transparent;
+}
+
+#webextpanels-window {
+  background: transparent !important;
+}
+
+#tabbrowser-tabbox {
+  transition: left .2s ease-in-out, top .2s ease-in-out, max-width .2s ease-in-out, height .2s ease-in-out;
+  left: var(--sdbr-wdt);
+  top: var(--navbar-height);
+  max-width: calc(100vw - var(--sdbr-wdt) - var(--toolbar-width));
+  height: calc(100vh - var(--navbar-height));
+}
+
+#main-window[titlepreface*="sidebar"] {
+  --sdbr-wdt: 0px;
+}
+
+#main-window[titlepreface*="toolbar"] {
+  --toolbar-width: 0px;
+}
+
+#main-window[titlepreface*="navbar"] {
+  --navbar-height: 0px;
+}
+
+#main-window[titlepreface*="clean-mode"] {
+  --sdbr-wdt: 0px;
+  --toolbar-width: 0px;
+  --navbar-height: 0px;
+}
+
+/* panels and context */
+menupopup {
+  padding: 0px !important;
+
+  arrowscrollbox {
+    padding: 0 !important;
+  }
+}
+
+menupopup, panel {
+  &::part(content) {
+    margin: 0 !important;
+    background-color: var(--shy-color-dark) !important;
+    border: none !important;
+  }
+}
+
+menupopup > :is(menuitem, menu) {
+  padding: 8px 0 !important;
+}
+
+menugroup .menuitem-iconic {
+  aspect-ratio: 3 / 2 !important;
+
+  hbox {
+    padding-right: 0px !important;
+  }
+}
