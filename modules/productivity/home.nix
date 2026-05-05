@@ -23,4 +23,10 @@ lib.mkIf cfg {
       type = "Application";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "opacity 0.999, match:class obsidian"
+    ];
+  };
 }

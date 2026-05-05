@@ -34,4 +34,12 @@ lib.mkIf cfg.firefox {
     target = ".mozilla/firefox/${name}/chrome";
     recursive = true;
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "idle_inhibit fullscreen, match:class firefox"
+      "opaque on, match:class firefox-nightly"
+      "no_shadow 0, match:class firefox-nightly"
+    ];
+  };
 }

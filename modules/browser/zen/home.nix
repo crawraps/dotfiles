@@ -98,4 +98,11 @@ lib.mkIf cfg.zen {
       type = "Application";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "opaque on, match:class zen-twilight"
+      "no_shadow 0, match:class zen-twilight"
+    ];
+  };
 }

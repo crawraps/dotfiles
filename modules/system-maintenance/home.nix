@@ -19,4 +19,10 @@ lib.mkIf (builtins.isAttrs cfg && cfg.tui or false) {
       type = "Application";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "float on, match:title btop"
+    ];
+  };
 }

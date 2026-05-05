@@ -147,4 +147,11 @@ lib.mkIf cfg.sherlock {
       style = builtins.readFile ./assets/style.css;
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    layerrule = [
+      "blur on, match:namespace sherlock"
+      "ignore_alpha 0.1, match:namespace sherlock"
+    ];
+  };
 }

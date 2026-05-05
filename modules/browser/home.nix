@@ -42,4 +42,14 @@ in
       "inode/directory" = "yazi.desktop";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "float on, match:title ^(Picture-in-Picture)$"
+      "size 384 216, match:title ^(Picture-in-Picture)$"
+      "rounding 0, match:title ^(Picture-in-Picture)$"
+      "pin on, match:title ^(Picture-in-Picture)$"
+      "move 100%-384 100%-216, match:title ^(Picture-in-Picture)$"
+    ];
+  };
 }

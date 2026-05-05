@@ -33,4 +33,14 @@ lib.mkIf (cfg != false) {
       type = "Application";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "float on, match:class pavucontrol"
+      "float on, match:title wiremix"
+      "float on, match:title ^(Volume Control)$"
+      "size 800 600, match:title ^(Volume Control)$"
+      "move 75 44%, match:title ^(Volume Control)$"
+    ];
+  };
 }

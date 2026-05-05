@@ -41,4 +41,11 @@ lib.mkIf cfg {
       type = "Application";
     };
   };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "opaque on, match:class thunderbird"
+      "float on, match:class thunderbird, match:title ^(Write:)$"
+    ];
+  };
 }

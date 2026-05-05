@@ -31,6 +31,13 @@ lib.mkIf (cfg != false) {
         categories = [ "AudioVideo" "Video" ];
         comment = "Open Broadcaster Software for video recording and live streaming";
         type = "Application";
-      };
     };
+  };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "idle_inhibit focus, match:class mpv"
+      "float on, match:class imv"
+    ];
+  };
 }

@@ -10,12 +10,18 @@ lib.mkIf (builtins.isAttrs cfg && cfg.tui or false) {
   xdg.desktopEntries = {
     bluetooth-manager = {
       name = "Bluetooth Manager";
-      exec = "${terminal-cmd} bluetui";
+      exec = "${terminal-cmd} --title bluetui bluetui";
       terminal = false;
       icon = ./assets/pictures/bluetooth.svg;
       categories = [ "Network" "Utility" ];
       comment = "bluetui";
       type = "Application";
     };
+  };
+
+  wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
+    windowrule = [
+      "float on, match:title bluetui"
+    ];
   };
 }

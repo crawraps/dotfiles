@@ -57,7 +57,6 @@ The preference key maps directly: `preferences.modules.git` → the `git` module
 | bootloader | `preferences.modules.bootloader` | `bool` | `true` | systemd-boot with rEFInd |
 | browser | `preferences.modules.browser` | `{ zen = bool; firefox = bool; chromium = bool; }` | `{ zen = true; firefox = false; chromium = true; }` | browser selection, only one needed — sub-modules toggle individually |
 | compositor | `preferences.modules.compositor` | `{ hyprland = bool; niri = bool; }` | `{ hyprland = true; niri = false; }` | wayland compositor — imports sub-modules based on flags |
-| desktop-entries | `preferences.modules` (reads multiple) | — | — | xdg mime defaults + custom .desktop files (reads browser, terminal, other module flags) |
 | development | `preferences.modules.development` | `bool` | `true` | dev toolchain: nodejs, cmake, meson, tree-sitter |
 | direnv | `preferences.modules.direnv` | `bool` | `true` | direnv + nix-direnv with zsh integration |
 | docker | `preferences.modules.docker` | `bool` | `false` | docker daemon with ipv6 support |
