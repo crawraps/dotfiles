@@ -18,6 +18,7 @@
   ];
 
   windowrule = [
+    "persistent_size on, match:float 1"
     "float on, match:title file_progress"
     "float on, match:title confirm"
     "float on, match:title dialog"
