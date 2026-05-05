@@ -1,0 +1,27 @@
+{
+  "anchors": {
+    "bottom": true
+  },
+  "margins": {
+    "bottom": 64
+  },
+  "topToBottom": false,
+  "width": 448,
+  "maxItems": 6,
+  "itemHeight": 48,
+  "colorfull": true,
+  "showSubtitle": true,
+  "debounce": 70,
+  "showExtraButton": true,
+  "extraUnfocusedOpacity": 0.8,
+  "autoFocusExtraWhenOneItem": false,
+  "terminal": "kitty",
+  "falloff": 3,
+  "scaleFactor": 0.75,
+  "damp": 3,
+  "favorites": [],
+  "showFavoriteIndicator": true,
+  "list": {
+    "apps": {}
+  }
+}

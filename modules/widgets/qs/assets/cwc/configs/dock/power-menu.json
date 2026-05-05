@@ -1,0 +1,19 @@
+{
+  "position": "right",
+  "orientation": "vertical",
+  "margins": {
+    "bottom": 100
+  },
+  "items": [
+    "logout",
+    "sleep",
+    "power-off"
+  ],
+  "iconSize": 56,
+  "alwaysVisible": false,
+  "showIconsBackground": true,
+  "showTooltips": false,
+  "falloff": 2,
+  "scaleFactor": 0.4,
+  "damp": 1.5
+}

@@ -1,0 +1,48 @@
+{
+	"anchors": {
+		"bottom": true
+	},
+	"margins": {
+		"bottom": 64
+	},
+	"topToBottom": false,
+	"width": 440,
+	"maxItems": 6,
+	"itemHeight": 48,
+	"colorfull": true,
+	"showSubtitle": true,
+	"debounce": 70,
+	"showExtraButton": true,
+	"extraUnfocusedOpacity": 0.8,
+	"autoFocusExtraWhenOneItem": false,
+	"terminal": "foot",
+	"falloff": 3,
+	"scaleFactor": 0.75,
+	"damp": 3,
+	"favorites": ["zen", "obsidian", "neovide"],
+	"showFavoriteIndicator": true,
+	"list": {
+		"apps": {
+			"exclude": [
+				"blueman-adapters",
+				"blueman-manager",
+				"chromium-browser",
+				"footclient",
+				"foot-server",
+				"gvim",
+				"org.kde.kdeconnect.app",
+				"org.kde.kdeconnect.nonplasma",
+				"org.kde.kdeconnect-settings",
+				"org.kde.kdeconnect.sms",
+				"cups",
+				"nixos-manual",
+				"nvidia-settings",
+				"com.obsproject.Studio",
+				"org.qbittorrent.qBittorrent",
+				"vim",
+				"org.pulseaudio.pavucontrol",
+				"zen-twilight"
+			]
+		}
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"position": "bottom",
+	"orientation": "horizontal",
+	"items": [
+		"Zen twilight",
+		"YouTube Music",
+		"Obsidian",
+		"Tasks",
+		"Telegram",
+		"YouTube",
+		"Thunderbird",
+		"Vide"
+	],
+	"iconSize": 48,
+	"alwaysVisible": false,
+	"showIconsBackground": true,
+	"showTooltips": true,
+	"falloff": 3,
+	"scaleFactor": 0.3,
+	"damp": 1
+}
