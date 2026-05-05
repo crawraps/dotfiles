@@ -11,7 +11,7 @@ lib.mkIf (builtins.isAttrs cfg && cfg.tui or false) {
   xdg.desktopEntries = {
     btop = {
       name = "btop";
-      exec = "${terminal-cmd} btop";
+      exec = "${terminal-cmd} --title btop btop";
       terminal = false;
       icon = ./assets/pictures/processor.svg;
       categories = [ "System" ];
