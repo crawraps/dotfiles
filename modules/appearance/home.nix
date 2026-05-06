@@ -1,4 +1,4 @@
-{ pkgs, pkgs-stable, preferences, lib, config, ... }:
+{ pkgs, preferences, lib, config, ... }:
 let
   cfg = preferences.modules.appearance;
   inherit (preferences.modules) terminal browser;
@@ -46,9 +46,13 @@ lib.mkIf cfg {
   home.file = {
     paper = { source = ./scripts/paper; target = ".local/bin/paper"; executable = true; };
     dye = { source = ./scripts/dye; target = ".local/bin/dye"; executable = true; };
+    broadcast-term-colors = { source = ./scripts/broadcast-term-colors; target = ".local/bin/broadcast-term-colors"; executable = true; };
   };
 
-  home.packages = [ pkgs-stable.swww ];
+  home.packages = with pkgs; [
+    awww
+    dart-sass
+  ];
 
   programs.wallust = {
     enable = true;

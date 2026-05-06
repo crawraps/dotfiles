@@ -30,10 +30,7 @@ lib.mkIf cfg.zsh {
         export PROMPT='%F{12}%~:%f '
       fi
 
-      theme < $XDG_CONFIG_HOME/colors/terminal
-      TRAPUSR1() {
-        theme < $XDG_CONFIG_HOME/colors/terminal
-      }
+      theme < $XDG_CONFIG_HOME/dynamic-colors/terminal
     '';
 
     loginExtra = let

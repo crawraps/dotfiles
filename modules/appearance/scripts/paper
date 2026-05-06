@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 
 function apply-wallpaper {
-  swww_pid=`pgrep -f 'swww-daemon'`
+  swww_pid=`pgrep -f 'awww-daemon'`
   if [[ -z $swww_pid ]]; then
-    nohup swww-daemon &> /dev/null &
+    nohup awww-daemon &>/dev/null &
     sleep 1;
   fi
 
-  swww img --transition-step 10 --transition-fps=165 $1
+  awww img --transition-step 10 --transition-fps=165 $1
   wallust -q -s run $1
 
   # update terminal colors
-  pkill -USR1 zsh
-
-  # reset kitty colors
-  kitty_pid=`pgrep -f 'kitty -1'`; [[ ! -z $kitty_pid ]] && kitty @ --to unix:@kitty-$kitty_pid set-colors --all --configured $XDG_CONFIG_HOME/kitty/colors.conf
+  broadcast-term-colors
 
   # reapply ags styles
-  ags_css=$CACHE/ags/styles/index.css
-  dart-sass $XDG_CONFIG_HOME/ags/styles/index.scss $ags_css && ags -r "App.applyCss('$ags_css')" > /dev/null
+  if command -v ags &>/dev/null; then
+    ags_css=$CACHE/ags/styles/index.css
+    dart-sass $XDG_CONFIG_HOME/ags/styles/index.scss $ags_css && ags -r "App.applyCss('$ags_css')" > /dev/null
+  fi
 
   # obsidian vault specific path. Obsidian live update not working with symlinks
-  dart-sass --no-source-map $XDG_CONFIG_HOME/colors/obsidian.scss ~/documents/notes/.obsidian/snippets/crawraps.css
+  if command -v obsidian &>/dev/null; then
+    dart-sass --no-source-map $XDG_CONFIG_HOME/dynamic-colors/obsidian.scss ~/documents/notes/.obsidian/snippets/crawraps.css
+  fi
 }
 
 wallpapers_dir="$WALLPAPERS"

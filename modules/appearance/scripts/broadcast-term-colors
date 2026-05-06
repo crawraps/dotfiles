@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+colors_file="${1:-$XDG_CONFIG_HOME/dynamic-colors/terminal}"
+
+if [[ ! -f "$colors_file" ]]; then
+  exit 1
+fi
+
+sequences=""
+while IFS=: read -r key value; do
+  key="${key//[[:space:]]/}"
+  value="${value//[[:space:]]/}"
+  [[ -z "$key" || -z "$value" ]] && continue
+  case "$key" in
+    background) sequences+=$'\033]11;'"${value}"$'\007' ;;
+    foreground) sequences+=$'\033]10;'"${value}"$'\007' ;;
+    cursor)     sequences+=$'\033]12;'"${value}"$'\007' ;;
+    [0-9]|[0-9][0-9])
+      if (( key >= 0 && key <= 15 )); then
+        sequences+=$'\033]4;'"${key};${value}"$'\007'
+      fi
+      ;;
+  esac
+done < "$colors_file"
+
+[[ -z "$sequences" ]] && exit 0
+
+for pts in /dev/pts/*; do
+  if [[ -c "$pts" && -w "$pts" ]]; then
+    owner=$(stat -c '%U' "$pts" 2>/dev/null)
+    if [[ "$owner" == "$USER" ]]; then
+      printf '%s' "$sequences" > "$pts" 2>/dev/null
+    fi
+  fi
+done
