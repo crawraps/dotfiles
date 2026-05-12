@@ -1,4 +1,4 @@
-{ lib, preferences, ... }:
+{ lib, pkgs, preferences, ... }:
 
 let cfg = preferences.modules.system-maintenance; in
 lib.mkIf (cfg == true || builtins.isAttrs cfg) {
@@ -20,6 +20,25 @@ lib.mkIf (cfg == true || builtins.isAttrs cfg) {
       START_CHARGE_THRESH_BAT0 = 40;
       STOP_CHARGE_THRESH_BAT0 = 80;
     };
+  };
+
+  system.autoUpgrade = {
+    enable = true;
+    flake = "/home/careem/.nix";
+    flags = [
+      "--print-build-logs"
+      "--commit-lock-file"
+    ];
+    dates = "Thu *-*-* 04:00:00";
+    randomizedDelaySec = "45min";
+  };
+
+  systemd.services.nixos-upgrade = {
+    path = [ pkgs.git pkgs.nix ];
+    preStart = ''
+      cd /home/careem/.nix
+      ${pkgs.nix}/bin/nix flake update --commit-lock-file
+    '';
   };
 
   nix.gc = {

@@ -7,6 +7,8 @@ lib.mkIf cfg {
       efi.canTouchEfiVariables = false;
     };
     kernelParams = [ "quiet" "usbcore.autosuspend=-1" ];
+
+    supportedFilesystems = [ "ntfs" ];
   };
 
   environment.systemPackages = with pkgs; [ refind efibootmgr ];
