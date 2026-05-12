@@ -80,7 +80,11 @@
         direnv = true;
         email = true;
         git = { tui = true; };
-        system-maintenance = { tui = true; };
+        system-maintenance = {
+          tui = true;
+          auto-update = true;
+          collect-garbage = true;
+        };
         media = {
           sound = { players = false; };
           video = {
