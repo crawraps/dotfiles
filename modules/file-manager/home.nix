@@ -92,6 +92,8 @@ lib.mkIf cfg {
         { on = [ "g" "w" ]; run = ["cd $WALLPAPERS"]; desc = "go wallpapers"; }
         { on = [ "g" "c" ]; run = ["cd ~/.nix"]; desc = "go config"; }
 
+        { on = [ "<C-g>" ]; run = "shell -- ${pkgs.dragon-drop}/bin/dragon-drop -x -i -T %h"; }
+
         { on = [ "e" "p" ]; run = ["shell 'paper -f \$0' --confirm"]; desc = "set as wallpaper"; }
       ];
     };
