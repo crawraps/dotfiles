@@ -26,7 +26,6 @@
     "$mod, F, fullscreen,"
     "$mod, Space, togglefloating,"
     "$mod, P, pseudo,"
-    "$mod, S, togglesplit,"
 
     "$mod, H, movefocus, l"
     "$mod, L, movefocus, r"

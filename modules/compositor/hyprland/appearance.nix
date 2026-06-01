@@ -23,7 +23,6 @@
 
     shadow = {
       enabled = false;
-      ignore_window = false;
     };
   };
 

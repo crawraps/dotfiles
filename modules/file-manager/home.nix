@@ -187,10 +187,10 @@ lib.mkIf cfg {
           { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}"; fg = "#f4b8e4"; }
           { mime = "application/{pdf,doc,rtf,md,vnd.*}"; fg = "#a6d189"; }
 
-          { name = "*"; is = "exec"; fg = "#e78284"; }
+          { url = "*"; is = "exec"; fg = "#e78284"; }
 
-          { name = "*"; fg = "white"; }
-          { name = "*/"; fg = "lightblue"; }
+          { url = "*"; fg = "white"; }
+          { url = "*/"; fg = "lightblue"; }
         ];
       };
 
