@@ -218,6 +218,28 @@ function apply-wallpaper {
   if command -v obsidian &>/dev/null; then
     dart-sass --no-source-map $XDG_CONFIG_HOME/dynamic-colors/obsidian.scss ~/documents/notes/.obsidian/snippets/crawraps.css
   fi
+
+  # push generated colors into mozilla-based browser profile chrome dirs so
+  # userChrome.css / userContent.css pick up the current palette. Each profile
+  # chrome dir gets a colors.css (from <browser>.css) and a userContent.css
+  # (from <browser>-userContent.css); missing source files are skipped.
+  local dyn="$XDG_CONFIG_HOME/dynamic-colors"
+  # zen browser: zen.css -> colors.css, zen-userContent.css -> userContent.css
+  if [[ -f "$dyn/zen.css" ]]; then
+    for profile in "$HOME"/.zen/*/chrome; do
+      [[ -d "$profile" ]] || continue
+      cp "$dyn/zen.css" "$profile/colors.css"
+      [[ -f "$dyn/zen-userContent.css" ]] && cp "$dyn/zen-userContent.css" "$profile/userContent.css"
+    done
+  fi
+  # firefox: firefox.css -> colors.css, firefox-userContent.css -> userContent.css
+  if [[ -f "$dyn/firefox.css" ]]; then
+    for profile in "$HOME"/.mozilla/firefox/*/chrome; do
+      [[ -d "$profile" ]] || continue
+      cp "$dyn/firefox.css" "$profile/colors.css"
+      [[ -f "$dyn/firefox-userContent.css" ]] && cp "$dyn/firefox-userContent.css" "$profile/userContent.css"
+    done
+  fi
 }
 
 # Get the current wallpaper path from awww, if running
