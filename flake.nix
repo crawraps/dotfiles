@@ -74,6 +74,7 @@
           opencode = true;
           ollama = true;
           oh-my-pi = true;
+          pi = true;
         };
         appearance = true;
         bluetooth = { tui = true; };

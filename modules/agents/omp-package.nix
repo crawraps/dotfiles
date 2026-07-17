@@ -32,6 +32,7 @@ pkgs.runCommandLocal "omp-${version}" {
   mkdir -p $out/bin
   cp $src $out/bin/omp
   chmod +x $out/bin/omp
+  chmod +w $out/bin/omp
   autoPatchelf $out/bin/omp
   wrapProgram $out/bin/omp --prefix PATH : ${lib.makeBinPath [ pkgs.ripgrep pkgs.fd pkgs.git pkgs.coreutils ]}
 ''
