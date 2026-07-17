@@ -1,14 +1,209 @@
 #!/usr/bin/env bash
 
+# paper - wallpaper setter with manual palette overrides and dark/light mode
+#
+# Manual palettes live in $CACHE/paper/palettes/<group>/<wallpaper-name>.json,
+# mirroring the $WALLPAPERS layout. Each JSON contains the full wallust palette
+# (background, foreground, cursor, color0..color15) and is applied via
+# `wallust cs` instead of generating from the image.
+#
+# Dark/light mode is stored in $CACHE/paper/mode and selects wallust's
+# dark16/light16 palette for auto-generated colors. Manual palettes always win.
+
+cache_dir="${CACHE:-$HOME/.cache}/paper"
+palettes_dir="$cache_dir/palettes"
+mode_file="$cache_dir/mode"
+
+mkdir -p "$palettes_dir"
+
+wallpapers_dir="${WALLPAPERS:-$HOME/images/wallpapers}"
+random=false
+
+function print-usage {
+  cat <<'EOF'
+Usage: paper [options] [wallpaper]
+
+Wallpaper selection:
+  -r                  select random wallpaper (default if no wallpaper given)
+  -g <group>          search in specific group (default: all groups)
+  -l                  list available wallpapers
+  -p                  list available groups
+  -f <file>           set specific file as wallpaper
+
+Palette management:
+  -e, --edit-palette [wallpaper]
+                      edit or create manual palette JSON for the wallpaper
+                      (uses current wallpaper if none given)
+  -c, --clear-palette <wallpaper>
+                      delete manual palette override
+      --list-palettes list all manual palette overrides
+      --show-palette [wallpaper]
+                      print palette JSON (manual, or generated if none)
+
+Theme mode:
+  -d, --dark          use dark mode and set as default
+  -L, --light         use light mode and set as default
+      --toggle-mode   toggle default dark/light mode
+      --mode <dark|light>
+                      set default mode without changing wallpaper
+
+  -h, --help          print this message
+EOF
+}
+
+function get-name {
+  local filename=$(basename "$1")
+  echo "${filename%.*}"
+}
+
+# Resolve an image path (relative to $WALLPAPERS by name or group/name) into an
+# absolute path. Args: <input> [group]
+function resolve-wallpaper {
+  local input="$1"
+  local group="${2:-}"
+  if [[ -f "$input" ]]; then
+    readlink -f "$input"
+    return
+  fi
+  local search_dir="$wallpapers_dir"
+  [[ -n "$group" ]] && search_dir="$wallpapers_dir/$group"
+  local found
+  found=$(find -L "$search_dir" -type f -name "$input.*" | head -1)
+  if [[ -z "$found" ]]; then
+    found=$(find -L "$search_dir" -type f -name "$input" | head -1)
+  fi
+  if [[ -z "$found" ]]; then
+    echo "No such wallpaper: $input" >&2
+    return 1
+  fi
+  readlink -f "$found"
+}
+
+# Relative key for a wallpaper, e.g. "common/red-succubus.png"
+function palette-key {
+  local abs="$1"
+  local base="${WALLPAPERS:-$HOME/images/wallpapers}"
+  local key="${abs#$base/}"
+  [[ "$key" == "$abs" ]] && key=$(basename "$abs")
+  echo "$key"
+}
+
+# Path to the manual palette JSON for a wallpaper
+function palette-path {
+  local abs="$1"
+  local key
+  key=$(palette-key "$abs")
+  local name="${key%.*}"
+  echo "$palettes_dir/${name}.json"
+}
+
+# Name registered in wallust colorschemes dir for a wallpaper
+function palette-cs-name {
+  local abs="$1"
+  local key
+  key=$(palette-key "$abs")
+  # wallust cs names map to files under ~/.config/wallust/colorschemes/
+  # use the key with slashes/dots replaced by dashes to form a flat name
+  echo "paper-${key//[\/.]/-}"
+}
+
+function list-wallpapers {
+  find -L "$wallpapers_dir" -type f -exec sh -c 'basename `printf "%s " "${0%.*}"`' {} ';'
+}
+
+function list-groups {
+  find -L "$wallpapers_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} ';'
+}
+
+# Read or default the theme mode
+function get-mode {
+  if [[ -f "$mode_file" ]]; then
+    cat "$mode_file"
+  else
+    echo "dark"
+  fi
+}
+
+function set-mode {
+  local m="$1"
+  case "$m" in
+    dark|light) echo "$m" > "$mode_file" ;;
+    *) echo "invalid mode: $m" >&2; return 1 ;;
+  esac
+}
+
+# Palette suffix used by wallust cache files for a given mode
+function mode-palette {
+  case "$1" in
+    dark)  echo "dark16" ;;
+    light) echo "light16" ;;
+  esac
+}
+
+# Find the wallust cache JSON most recently written for a given palette.
+# Cache files are named <Backend>_<Colorspace>_<Threshold>_<Palette> under
+# ~/.cache/wallust/<hash>_1.7/.
+function latest-wallust-cache {
+  local palette="$1"
+  local suffix
+  # capitalize first letter to match Dark16/Light16 suffix
+  suffix="$(echo "${palette:0:1}" | tr '[:lower:]' '[:upper:]')${palette:1}"
+  find "${HOME}/.cache/wallust" -type f -name "*_${suffix}" -printf '%T@ %p\n' 2>/dev/null \
+    | sort -rn | head -1 | cut -d' ' -f2-
+}
+
+# Generate a palette JSON from an image into a target file by running wallust
+# and copying the produced cache file. Args: <image> <output-json> [mode]
+function generate-palette-json {
+  local image="$1"
+  local out="$2"
+  local mode="${3:-$(get-mode)}"
+  local palette
+  palette=$(mode-palette "$mode")
+  # Run wallust against the image with the requested palette, skipping
+  # terminal sequences and templates so seeding is fast and side-effect free.
+  # Use -w (overwrite-cache) so a fresh palette JSON is always written to disk
+  # for us to read back; -n would skip writing entirely.
+  wallust run "$image" -q -s -T -w --palette "$palette" >/dev/null 2>&1 || true
+  local cache
+  cache=$(latest-wallust-cache "$palette")
+  if [[ -z "$cache" || ! -f "$cache" ]]; then
+    echo "could not locate generated wallust palette" >&2
+    return 1
+  fi
+  mkdir -p "$(dirname "$out")"
+  cp "$cache" "$out"
+}
+
+# Apply a wallpaper: set image via awww, then apply palette (manual or auto).
 function apply-wallpaper {
-  swww_pid=`pgrep -f 'awww-daemon'`
+  local image="$1"
+  local mode
+  mode=$(get-mode)
+
+  swww_pid=$(pgrep -f 'awww-daemon' || true)
   if [[ -z $swww_pid ]]; then
     nohup awww-daemon &>/dev/null &
-    sleep 1;
+    sleep 1
   fi
 
-  awww img --transition-step 10 --transition-fps=165 $1
-  wallust -q -s run $1
+  awww img --transition-step 10 --transition-fps=165 "$image"
+
+  local palette
+  palette=$(palette-path "$image")
+  if [[ -f "$palette" ]]; then
+    # Manual override: register it as a wallust colorscheme and apply
+    local cs_name
+    cs_name=$(palette-cs-name "$image")
+    local cs_dir="$HOME/.config/wallust/colorschemes"
+    mkdir -p "$cs_dir"
+    cp "$palette" "$cs_dir/${cs_name}.json"
+    wallust cs "$cs_name" -q -s
+  else
+    local p
+    p=$(mode-palette "$mode")
+    wallust -q -s run "$image" --palette "$p"
+  fi
 
   # update terminal colors
   broadcast-term-colors
@@ -16,7 +211,7 @@ function apply-wallpaper {
   # reapply ags styles
   if command -v ags &>/dev/null; then
     ags_css=$CACHE/ags/styles/index.css
-    dart-sass $XDG_CONFIG_HOME/ags/styles/index.scss $ags_css && ags -r "App.applyCss('$ags_css')" > /dev/null
+    dart-sass $XDG_CONFIG_HOME/ags/styles/index.scss "$ags_css" && ags -r "App.applyCss('$ags_css')" > /dev/null
   fi
 
   # obsidian vault specific path. Obsidian live update not working with symlinks
@@ -25,64 +220,193 @@ function apply-wallpaper {
   fi
 }
 
-wallpapers_dir="$WALLPAPERS"
-random=false
-
-function print-usage {
-  echo "Usage: paper [options] [wallpaper]"
-  echo "  -r: select random wallpaper. If no wallpaper is specified, this flag is true"
-  echo "  -g: search in specific group. All groups included by default"
-  echo "  -l: list available wallpapers"
-  echo "  -p: list available groups"
-  echo "  -h: print this message"
-  echo "  -f: set file as wallpaper"
+# Get the current wallpaper path from awww, if running
+function current-wallpaper {
+  if ! pgrep -f 'awww-daemon' >/dev/null 2>&1; then
+    return 1
+  fi
+  awww query -j 2>/dev/null | jq -r 'to_entries[0].value[0].displaying.image // empty' 2>/dev/null
 }
 
-function get-name {
-  local filename=$(basename $1)
-  echo ${filename%.*}
+# --- palette management commands ---
+
+function cmd-edit-palette {
+  local image="${1:-}"
+  if [[ -z "$image" ]]; then
+    image=$(current-wallpaper) || {
+      echo "awww is not running; specify a wallpaper" >&2
+      return 1
+    }
+  fi
+  image=$(resolve-wallpaper "$image") || return 1
+  local out
+  out=$(palette-path "$image")
+  if [[ ! -f "$out" ]]; then
+    echo "seeding palette from image (mode: $(get-mode))..." >&2
+    generate-palette-json "$image" "$out" || return 1
+  fi
+  local editor="${EDITOR:-vi}"
+  "$editor" "$out"
 }
 
-function list-wallpapers {
-  find -L $wallpapers_dir -type f -exec sh -c 'basename `printf "%s " "${0%.*}"`' {} ';'
+function cmd-clear-palette {
+  local image="${1:-}"
+  [[ -z "$image" ]] && { echo "clear-palette requires a wallpaper" >&2; return 1; }
+  image=$(resolve-wallpaper "$image") || return 1
+  local out
+  out=$(palette-path "$image")
+  if [[ -f "$out" ]]; then
+    rm -f "$out"
+    echo "removed $out"
+  else
+    echo "no manual palette for $(palette-key "$image")" >&2
+  fi
+  # also remove any registered wallust colorscheme copy
+  local cs_name cs_dir
+  cs_name=$(palette-cs-name "$image")
+  cs_dir="$HOME/.config/wallust/colorschemes"
+  rm -f "$cs_dir/${cs_name}.json"
 }
 
-function list-groups {
-  find -L $wallpapers_dir -mindepth 1 -maxdepth 1 -type d -exec basename {} ';'
+function cmd-list-palettes {
+  if [[ ! -d "$palettes_dir" ]] || [[ -z "$(find "$palettes_dir" -type f 2>/dev/null)" ]]; then
+    echo "no manual palettes"
+    return 0
+  fi
+  # print keys relative to palettes_dir, stripping .json
+  find "$palettes_dir" -type f -name '*.json' -printf '%P\n' | sed 's/\.json$//' | sort
 }
 
-while getopts 'rg:lphf:' flag; do
+function cmd-show-palette {
+  local image="${1:-}"
+  if [[ -z "$image" ]]; then
+    image=$(current-wallpaper) || {
+      echo "awww is not running; specify a wallpaper" >&2
+      return 1
+    }
+  fi
+  image=$(resolve-wallpaper "$image") || return 1
+  local out
+  out=$(palette-path "$image")
+  if [[ -f "$out" ]]; then
+    cat "$out"
+  else
+    local tmp
+    tmp=$(mktemp)
+    generate-palette-json "$image" "$tmp" || { rm -f "$tmp"; return 1; }
+    cat "$tmp"
+    rm -f "$tmp"
+  fi
+}
+
+# --- theme mode commands ---
+
+function cmd-toggle-mode {
+  local m
+  m=$(get-mode)
+  case "$m" in
+    dark)  set-mode light; echo "light" ;;
+    light) set-mode dark;  echo "dark" ;;
+  esac
+}
+
+function cmd-set-mode {
+  local m="$1"
+  set-mode "$m" || return 1
+  echo "$m"
+}
+
+# --- argument parsing ---
+# Long options are handled manually before getopts since bash getopts doesn't
+# support them natively.
+
+declare -a passthrough=()
+args=("$@")
+i=0
+while [[ $i -lt ${#args[@]} ]]; do
+  arg="${args[$i]}"
+  case "$arg" in
+    --help)     print-usage; exit 0 ;;
+    --edit-palette)
+      next="${args[$((i+1))]:-}"
+      if [[ -z "$next" || "$next" == -* ]]; then
+        cmd-edit-palette ""
+      else
+        cmd-edit-palette "$next"; i=$((i+1))
+      fi
+      exit 0 ;;
+    --clear-palette)
+      next="${args[$((i+1))]:-}"
+      [[ -z "$next" || "$next" == -* ]] && { echo "--clear-palette requires a wallpaper" >&2; exit 1; }
+      cmd-clear-palette "$next"; i=$((i+1)); exit 0 ;;
+    --list-palettes) cmd-list-palettes; exit 0 ;;
+    --show-palette)
+      next="${args[$((i+1))]:-}"
+      if [[ -z "$next" || "$next" == -* ]]; then
+        cmd-show-palette ""
+      else
+        cmd-show-palette "$next"; i=$((i+1))
+      fi
+      exit 0 ;;
+    --dark)     cmd-set-mode dark; exit 0 ;;
+    --light)    cmd-set-mode light; exit 0 ;;
+    --toggle-mode) cmd-toggle-mode; exit 0 ;;
+    --mode)
+      next="${args[$((i+1))]:-}"
+      [[ -z "$next" || "$next" == -* ]] && { echo "--mode requires dark|light" >&2; exit 1; }
+      cmd-set-mode "$next"; i=$((i+1)); exit 0 ;;
+    *)
+      passthrough+=("$arg") ;;
+  esac
+  i=$((i+1))
+done
+
+set -- "${passthrough[@]}"
+
+# Short options via getopts
+while getopts 'rg:lphf:ecLd' flag; do
   case "${flag}" in
     r) random=true ;;
-    g) wallpapers_dir="$WALLPAPERS/${OPTARG}" ;;
+    g) wallpapers_dir="$wallpapers_dir/${OPTARG}" ;;
     l) list-wallpapers; exit 0 ;;
     p) list-groups; exit 0 ;;
-    f) apply-wallpaper $OPTARG
-       exit 0 ;;
-    h) print-usage
-       exit 0 ;;
-    *) print-usage
-       exit 1 ;;
+    f) apply-wallpaper "$(readlink -f "$OPTARG")"; exit 0 ;;
+    e)
+      next=""
+      [[ $OPTIND -le $# ]] && next="${!OPTIND}"
+      if [[ -z "$next" || "$next" == -* ]]; then
+        cmd-edit-palette ""
+      else
+        cmd-edit-palette "$next"; OPTIND=$((OPTIND+1))
+      fi
+      exit 0 ;;
+    c)
+      next=""
+      [[ $OPTIND -le $# ]] && next="${!OPTIND}"
+      [[ -z "$next" || "$next" == -* ]] && { echo "-c requires a wallpaper" >&2; exit 1; }
+      cmd-clear-palette "$next"; OPTIND=$((OPTIND+1)); exit 0 ;;
+    L) cmd-set-mode light; exit 0 ;;
+    d) cmd-set-mode dark;  exit 0 ;;
+    h) print-usage; exit 0 ;;
+    *) print-usage; exit 1 ;;
   esac
 done
 
 shift $((OPTIND - 1))
 
-random_image=$(find -L $wallpapers_dir -type f | shuf -n 1)
+random_image=$(find -L "$wallpapers_dir" -type f | shuf -n 1)
 
-if [ -z $1 ]; then
-  apply-wallpaper $random_image
+if [ -z "${1:-}" ]; then
+  apply-wallpaper "$random_image"
 else
   if [ $random = true ]; then
-    apply-wallpaper $random_image
+    apply-wallpaper "$random_image"
   else
-    wallpaper=$(find -L $wallpapers_dir -type f -name "$1.*")
-
-    if [ -z $wallpaper ]; then
+    wallpaper=$(find -L "$wallpapers_dir" -type f -name "$1.*")
+    if [ -z "$wallpaper" ]; then
       echo "No such wallpaper. List available wallpapers with -l flag"
       exit 1
     fi
-
-    apply-wallpaper $(readlink -f $wallpaper)
+    apply-wallpaper "$(readlink -f "$wallpaper")"
   fi
 fi

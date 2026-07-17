@@ -52,6 +52,7 @@ lib.mkIf cfg {
   home.packages = with pkgs; [
     awww
     dart-sass
+    jq
   ];
 
   programs.wallust = {

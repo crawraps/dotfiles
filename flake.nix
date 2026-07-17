@@ -72,9 +72,9 @@
           claude = false;
           gemini = false;
           opencode = true;
-          ollama = true;
-          oh-my-pi = true;
-          pi = true;
+          ollama = false;
+          oh-my-pi = false;
+          pi = false;
         };
         appearance = true;
         bluetooth = { tui = true; };
