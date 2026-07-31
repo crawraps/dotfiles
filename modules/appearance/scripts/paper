@@ -362,8 +362,11 @@ function crop-ratio {
 # Tags: space-separated, e.g. "1girl solo". Sample: "1" for large_file_url.
 # Uses API key auth from $secrets_dir/danbooru.{user,key} when present, which
 # raises the rate limit. Falls back to anonymous. Danbooru counts `random=true`
-# as a tag, so server-side random only works with up to 1 explicit tag; for more
-# tags we fetch a page of posts and pick randomly client-side.
+# as a tag, so server-side random only works with up to 1 explicit tag. When a
+# crop filter or 2+ tags are used, pages are fetched sequentially and a random
+# candidate is picked client-side. Crop filtering is applied before dedup so
+# that cached images don't reduce the candidate pool prematurely; if no
+# candidates survive all filters on a page, the next page is fetched.
 function provider-danbooru {
   local tags="$1"
   local sample="$2"
@@ -392,62 +395,137 @@ function provider-danbooru {
     tag_count=${#_t[@]}
   fi
 
-  # Authenticated users get higher rate limits, but Danbooru counts `random=true`
-  # as a tag, so `random=true` only works with up to 1 explicit tag regardless of
-  # auth. For 2+ tags we fetch a page of results and pick randomly client-side.
-  local url
-  if [[ $tag_count -le 1 ]]; then
-    url="${api}/posts.json?limit=1&random=true"
-    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
-  else
-    url="${api}/posts.json?limit=100"
-    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
+  # decide whether to use client-side random with pagination. We need it when
+  # (a) 2+ tags are given (server random rejects multi-tag), or (b) a crop
+  # filter is active (server random returns only 1 post with no fallback).
+  local use_client_random=0
+  if [[ $tag_count -gt 1 ]]; then
+    use_client_random=1
+  elif awk "BEGIN{exit !($remote_crop_threshold > 0)}" 2>/dev/null; then
+    use_client_random=1
   fi
-  url="${url}${auth}"
 
-  local json
-  json=$(curl -sSL --fail -m 30 -A "paper" "$url" 2>/dev/null) || {
-    echo "danbooru: request failed" >&2
-    return 1
-  }
-  [[ -z "$json" ]] && { echo "danbooru: empty response" >&2; return 1; }
-
-  # filter out deleted/banned posts and non-image files, then pick one
-  # (client-side random for 2+ tags)
-  local filtered
-  filtered=$(printf '%s' "$json" | jq -r 'map(select(.is_deleted != true and .is_banned != true and (.file_ext | test("^(png|jpg|jpeg|webp|gif)$"))))') || {
-    echo "danbooru: invalid JSON" >&2
-    return 1
-  }
-
-  # apply crop-ratio filter against the main screen when threshold > 0
+  # prepare screen dimensions for the crop filter (used in both paths)
   local thresh="$remote_crop_threshold"
+  local screen_w="" screen_h=""
   if awk "BEGIN{exit !($thresh > 0)}" 2>/dev/null; then
-    local screen_w screen_h
     read -r screen_w screen_h < <(get-screen-size)
-    filtered=$(printf '%s' "$filtered" | jq -r --argjson sw "$screen_w" --argjson sh "$screen_h" --argjson th "$thresh" '
-      def crop_ratio($iw; $ih):
-        (if ($sw / $iw) > ($sh / $ih) then ($sw / $iw) else ($sh / $ih) end) as $s
-        | 1 - ($sw * $sh) / (($iw * $s) * ($ih * $s));
-      map(select((.image_width // 0) > 0 and (.image_height // 0) > 0 and crop_ratio(.image_width; .image_height) <= $th))
-    ') || {
-      echo "danbooru: crop filter failed" >&2
-      return 1
-    }
   fi
+
+  # prepare the list of already-cached filenames for the dedup filter
+  mkdir -p "$out_dir"
+  local existing_json
+  existing_json=$(find "$out_dir" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | jq -R . | jq -s .)
+
+  # --- server-side random: single request, 1 post ---
+  if [[ $use_client_random -eq 0 ]]; then
+    local url="${api}/posts.json?limit=1&random=true"
+    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
+    url="${url}${auth}"
+    local json
+    json=$(curl -sSL --fail -m 30 -A "paper" "$url" 2>/dev/null) || {
+      echo "danbooru: request failed" >&2; return 1
+    }
+    [[ -z "$json" ]] && { echo "danbooru: empty response" >&2; return 1; }
+
+    # apply deleted/banned/non-image, crop, then dedup filters in sequence
+    local filtered
+    filtered=$(printf '%s' "$json" | jq -r --argjson existing "$existing_json" '
+      map(select(.is_deleted != true and .is_banned != true
+        and (.file_ext | test("^(png|jpg|jpeg|webp|gif)$"))))')
+    if [[ -n "$screen_w" ]]; then
+      filtered=$(printf '%s' "$filtered" | jq -r --argjson sw "$screen_w" --argjson sh "$screen_h" --argjson th "$thresh" '
+        def crop_ratio($iw; $ih):
+          (if ($sw / $iw) > ($sh / $ih) then ($sw / $iw) else ($sh / $ih) end) as $s
+          | 1 - ($sw * $sh) / (($iw * $s) * ($ih * $s));
+        map(select((.image_width // 0) > 0 and (.image_height // 0) > 0
+          and crop_ratio(.image_width; .image_height) <= $th))')
+    fi
+    filtered=$(printf '%s' "$filtered" | jq -r --argjson existing "$existing_json" '
+      map(select(((.id | tostring) + "." + .file_ext) as $name | $existing | index($name) | not))')
+
+    local count
+    count=$(printf '%s' "$filtered" | jq 'length')
+    [[ "$count" -eq 0 ]] && {
+      echo "danbooru: no posts matched tags (after all filters)" >&2; return 1
+    }
+    local post
+    post=$(printf '%s' "$filtered" | jq -r '.[0]')
+    _danbooru-download-and-emit "$post" "$sample" "$out_dir"
+    return $?
+  fi
+
+  # --- client-side random with pagination ---
+  # Fetch pages 1..MAX_PAGES, apply crop filter first, then dedup. Accumulate
+  # survivors; stop as soon as we have at least one candidate (or run out of
+  # pages). Then pick one at random from the accumulated set.
+  local max_pages="${PAPER_REMOTE_MAX_PAGES:-10}"
+  local page candidates=""
+  for (( page=1; page<=max_pages; page++ )); do
+    local url="${api}/posts.json?limit=100&page=${page}"
+    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
+    url="${url}${auth}"
+
+    local json
+    json=$(curl -sSL --fail -m 30 -A "paper" "$url" 2>/dev/null) || {
+      echo "danbooru: request failed (page $page)" >&2; break
+    }
+    [[ -z "$json" ]] && break
+    # empty array means no more results
+    local page_len
+    page_len=$(printf '%s' "$json" | jq 'length' 2>/dev/null)
+    [[ -z "$page_len" || "$page_len" -eq 0 ]] && break
+
+    # 1. deleted/banned/non-image
+    local f1
+    f1=$(printf '%s' "$json" | jq -r 'map(select(.is_deleted != true and .is_banned != true and (.file_ext | test("^(png|jpg|jpeg|webp|gif)$"))))')
+
+    # 2. crop filter (before dedup so cached images don't shrink the pool early)
+    if [[ -n "$screen_w" ]]; then
+      f1=$(printf '%s' "$f1" | jq -r --argjson sw "$screen_w" --argjson sh "$screen_h" --argjson th "$thresh" '
+        def crop_ratio($iw; $ih):
+          (if ($sw / $iw) > ($sh / $ih) then ($sw / $iw) else ($sh / $ih) end) as $s
+          | 1 - ($sw * $sh) / (($iw * $s) * ($ih * $s));
+        map(select((.image_width // 0) > 0 and (.image_height // 0) > 0 and crop_ratio(.image_width; .image_height) <= $th))')
+    fi
+
+    # 3. dedup (already-cached)
+    f1=$(printf '%s' "$f1" | jq -r --argjson existing "$existing_json" '
+      map(select(((.id | tostring) + "." + .file_ext) as $name | $existing | index($name) | not))')
+
+    # merge into the candidate pool
+    if [[ -z "$candidates" ]]; then
+      candidates="$f1"
+    else
+      candidates=$(printf '%s\n%s' "$candidates" "$f1" | jq -s 'add')
+    fi
+
+    local pool_len
+    pool_len=$(printf '%s' "$candidates" | jq 'length' 2>/dev/null)
+    if [[ -n "$pool_len" && "$pool_len" -gt 0 ]]; then
+      break
+    fi
+  done
 
   local count
-  count=$(printf '%s' "$filtered" | jq 'length')
-  [[ "$count" -eq 0 ]] && {
-    echo "danbooru: no posts matched tags (after crop filter)" >&2
+  count=$(printf '%s' "$candidates" | jq 'length' 2>/dev/null)
+  [[ -z "$count" || "$count" -eq 0 ]] && {
+    echo "danbooru: no posts matched tags (after all filters, $((page-1)) pages)" >&2
     return 1
   }
 
-  local idx=0
-  [[ $tag_count -gt 1 ]] && idx=$(( RANDOM % count ))
+  local idx=$(( RANDOM % count ))
   local post
-  post=$(printf '%s' "$filtered" | jq -r ".[${idx}]")
+  post=$(printf '%s' "$candidates" | jq -r ".[${idx}]")
+  _danbooru-download-and-emit "$post" "$sample" "$out_dir"
+  return $?
+}
 
+# Download the picked post's image and echo its path. Args: <post-json> <sample> <out-dir>
+function _danbooru-download-and-emit {
+  local post="$1"
+  local sample="$2"
+  local out_dir="$3"
   local file_url id ext
   if [[ "$sample" == "1" ]]; then
     file_url=$(printf '%s' "$post" | jq -r '.large_file_url // empty')
@@ -455,18 +533,14 @@ function provider-danbooru {
     file_url=$(printf '%s' "$post" | jq -r '.file_url // empty')
   fi
   [[ -z "$file_url" || "$file_url" == "null" ]] && {
-    echo "danbooru: post has no usable file url" >&2
-    return 1
+    echo "danbooru: post has no usable file url" >&2; return 1
   }
   id=$(printf '%s' "$post" | jq -r '.id')
   ext=$(printf '%s' "$post" | jq -r '.file_ext')
-
   mkdir -p "$out_dir"
   local out="$out_dir/${id}.${ext}"
   curl -sSL --fail -m 120 -A "paper" -o "$out" "$file_url" 2>/dev/null || {
-    echo "danbooru: image download failed" >&2
-    rm -f "$out"
-    return 1
+    echo "danbooru: image download failed" >&2; rm -f "$out"; return 1
   }
   echo "$out"
 }
