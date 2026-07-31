@@ -28,6 +28,7 @@
     ./terminal
     ./user
     ./utilities
+    ./waydroid
     ./widgets
     ./file-manager
   ];

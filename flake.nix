@@ -111,6 +111,7 @@
         mongodb = false;
         network = true;
         user = true;
+        waydroid = true;
       };
     };
 
