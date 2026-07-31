@@ -1,10 +1,18 @@
-{ preferences, lib, ... }:
+{ preferences, lib, pkgs, ... }:
 
-let cfg = preferences.modules.terminal; in
+let
+  cfg = preferences.modules.terminal;
+  footPatched = pkgs.foot.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [
+      ./patches/no-bg-effect-unless-blur.patch
+    ];
+  });
+in
 lib.mkIf cfg.foot {
   programs.foot = {
     enable = true;
     server.enable = true;
+    package = footPatched;
   };
 
   xdg.configFile."foot/foot.ini".text = ''

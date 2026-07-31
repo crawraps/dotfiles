@@ -1,0 +1,19 @@
+diff --git a/wayland.c b/wayland.c
+index f5737c1..3ee0c30 100644
+--- a/wayland.c
++++ b/wayland.c
+@@ -2055,7 +2055,13 @@ wayl_win_init(struct terminal *term, const char *token)
+     }
+ 
+ #if defined(HAVE_EXT_BACKGROUND_EFFECT)
+-    if (wayl->background_effect_manager != NULL) {
++    /* Only bind the per-surface background effect object when the user
++     * has actually enabled foot's own `blur` option. Binding it
++     * unconditionally makes compositors such as Hyprland 0.56 stop
++     * applying their own decoration blur behind transparent foot
++     * windows, even though foot is not requesting a blur region. */
++    if (wayl->background_effect_manager != NULL &&
++        term_theme_get(term)->blur) {
+         win->surface.background_effect =
+             ext_background_effect_manager_v1_get_background_effect(
+                 wayl->background_effect_manager, win->surface.surf);
