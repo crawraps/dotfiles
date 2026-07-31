@@ -18,8 +18,8 @@ body {
   --crawraps-bg: var(--bg);
   --crawraps-background-light: rgba(var(--crawraps-bg), 0.3);
   --crawraps-background: rgba(var(--crawraps-bg), 0.3);
-  --crawraps-background-dark: rgba(var(--crawraps-bg), 0.5);
-  --modal-background: rgba(var(--crawraps-bg), 0.5);
+  --crawraps-background-dark: rgba(var(--crawraps-bg), __PAPER_TRANSPARENCY__);
+  --modal-background: rgba(var(--crawraps-bg), __PAPER_TRANSPARENCY__);
   --h1-size: 1.625em;
   --h2-size: 1.475em;
   --h3-size: 1.25em;

@@ -20,6 +20,10 @@ let
     zen = { template = "zen.css"; target = "~/.config/dynamic-colors/zen.css"; };
     zenUserContent = { template = "firefox-userContent.css"; target = "~/.config/dynamic-colors/zen-userContent.css"; };
   };
+
+  footTemplates = lib.optionalAttrs (terminal.foot or false) {
+    foot = { template = "foot.ini"; target = "~/.config/dynamic-colors/foot.ini"; };
+  };
 in
 lib.mkIf cfg {
   home.pointerCursor = {
@@ -53,6 +57,7 @@ lib.mkIf cfg {
     awww
     dart-sass
     jq
+    curl
   ];
 
   programs.wallust = {
@@ -71,7 +76,7 @@ lib.mkIf cfg {
         hyprland = { template = "hyprland.conf"; target = "~/.config/dynamic-colors/hyprland.conf"; };
         cwc = { template = "cwc.json"; target = "~/.config/dynamic-colors/cwc.json"; };
         terminal = { template = "terminal"; target = "~/.config/dynamic-colors/terminal"; };
-      } // kittyTemplates // firefoxTemplates // zenTemplates;
+      } // kittyTemplates // firefoxTemplates // zenTemplates // footTemplates;
     };
   };
 

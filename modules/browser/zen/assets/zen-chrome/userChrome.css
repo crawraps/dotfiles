@@ -8,7 +8,7 @@
 
 :root {
   --zen-main-browser-background: transparent !important;
-  --zen-branding-bg: rgba(var(--cuil-background), .5) !important;
+  --zen-branding-bg: rgba(var(--cuil-background), var(--cuil-transparency)) !important;
   --zen-themed-toolbar-bg-transparent: var(--zen-branding-bg) !important;
 }
 
@@ -56,7 +56,7 @@
 :root {
   --zen-toolbar-element-bg: rgba(var(--cuil-primary), .75) !important;
   --zen-big-shadow: none !important;
-  --toolbarbutton-hover-background: rgba(var(--cuil-background), .5) !important;
+  --toolbarbutton-hover-background: rgba(var(--cuil-background), var(--cuil-transparency)) !important;
 }
 
 #urlbar:not([breakout-extend="true"]) {
@@ -97,7 +97,7 @@
   }
 
   &:hover .tab-background {
-    background: rgba(var(--cuil-background), .5) !important;
+    background: rgba(var(--cuil-background), var(--cuil-transparency)) !important;
   }
 }
 
@@ -131,7 +131,7 @@
         width: 100%;
         height: 100%;
         border-radius: var(--border-radius-medium);
-        background: linear-gradient(to right, rgba(var(--cuil-primary), .5) 0%, transparent 80%) !important;
+        background: linear-gradient(to right, rgba(var(--cuil-primary), var(--cuil-transparency)) 0%, transparent 80%) !important;
         transform: translateX(-80%);
         transition: .2s ease-in-out;
       }

@@ -9,10 +9,23 @@
 #
 # Dark/light mode is stored in $CACHE/paper/mode and selects wallust's
 # dark16/light16 palette for auto-generated colors. Manual palettes always win.
+#
+# Remote sources: `paper --remote [provider] [--tags "tags"] [--sample]`
+# fetches a random image from a remote provider (default: danbooru) and applies
+# it. Downloaded images live in $CACHE/paper/remote/<provider>/ and are pruned
+# after `remote_retention_days` (default: 30). Add a manual palette JSON next
+# to a downloaded image (named <id>.json) to override its colors.
 
 cache_dir="${CACHE:-$HOME/.cache}/paper"
 palettes_dir="$cache_dir/palettes"
 mode_file="$cache_dir/mode"
+remote_dir="$cache_dir/remote"
+remote_retention_days="${PAPER_REMOTE_RETENTION_DAYS:-30}"
+# reject remote images that would be cropped by more than this fraction (0..1)
+# when displayed in cover mode on the main screen; 0 disables the filter
+remote_crop_threshold="${PAPER_REMOTE_CROP_THRESHOLD:-0.1}"
+# secrets live alongside the flake (gitignored), read at runtime
+secrets_dir="${PAPER_SECRETS_DIR:-$HOME/.nix/secrets}"
 
 mkdir -p "$palettes_dir"
 
@@ -46,6 +59,17 @@ Theme mode:
       --toggle-mode   toggle default dark/light mode
       --mode <dark|light>
                       set default mode without changing wallpaper
+
+Remote sources:
+      --remote [provider]
+                      fetch a random image from <provider> (default: danbooru)
+      --tags <tags>   space-separated tags passed to the remote provider
+      --sample        download the sample image instead of the original
+      --crop-threshold <percent>
+                      reject images cropped by more than <percent> in cover mode
+                      on the main screen (default: 10; 0 disables)
+      --prune-remote  delete remote images older than PAPER_REMOTE_RETENTION_DAYS
+                      (default: 30) days and exit
 
   -h, --help          print this message
 EOF
@@ -173,6 +197,43 @@ function generate-palette-json {
   fi
   mkdir -p "$(dirname "$out")"
   cp "$cache" "$out"
+  # inject the default transparency field so users can edit it via `paper -e`
+  jq '. + {transparency: 0.5}' "$out" > "$out.tmp" && mv "$out.tmp" "$out"
+}
+
+# Read the effective transparency for a wallpaper. Returns the manual
+# palette's `transparency` (clamped to 0..1), or 0.5 when no manual palette.
+function get-transparency {
+  local image="$1"
+  local palette
+  palette=$(palette-path "$image")
+  local t="0.5"
+  if [[ -f "$palette" ]]; then
+    local val
+    val=$(jq -r '.transparency // empty' "$palette" 2>/dev/null) || val=""
+    if [[ -n "$val" ]]; then
+      # validate numeric and clamp to [0,1]
+      if [[ "$val" =~ ^[0-9]+(\.[0-9]+)?$ ]] && awk "BEGIN{exit !($val>=0 && $val<=1)}"; then
+        t="$val"
+      fi
+    fi
+  fi
+  echo "$t"
+}
+
+# Substitute __PAPER_TRANSPARENCY__ in all generated dynamic-colors files with
+# the effective transparency value. Must run after wallust and before any
+# downstream consumers (ags, obsidian, browser chrome copy).
+function apply-transparency {
+  local image="$1"
+  local t
+  t=$(get-transparency "$image")
+  local dyn="$XDG_CONFIG_HOME/dynamic-colors"
+  [[ -d "$dyn" ]] || return 0
+  for f in "$dyn"/*; do
+    [[ -f "$f" ]] || continue
+    sed -i "s/__PAPER_TRANSPARENCY__/$t/g" "$f"
+  done
 }
 
 # Apply a wallpaper: set image via awww, then apply palette (manual or auto).
@@ -204,6 +265,9 @@ function apply-wallpaper {
     p=$(mode-palette "$mode")
     wallust -q -s run "$image" --palette "$p"
   fi
+
+  # substitute the base transparency value into all generated templates
+  apply-transparency "$image"
 
   # update terminal colors
   broadcast-term-colors
@@ -242,6 +306,200 @@ function apply-wallpaper {
   fi
 }
 
+# --- remote wallpaper sources ---
+#
+# Each provider is a function named `provider-<name>` taking three arguments:
+#   <tags> <sample> <out-dir>
+# It must download a single random image matching <tags> into <out-dir> and
+# print its absolute path on stdout (or return non-zero on failure).
+#
+# `fetch-remote` dispatches to the right provider by name.
+
+# URL-encode a string for use in a query parameter (spaces -> +).
+function url-encode {
+  local s="$1"
+  s="${s// /+}"
+  # leave alnum and +-_.*() untouched, percent-encode the rest
+  printf '%s' "$s" | sed -e 's/ /+/g' \
+    | jq -sRr '@uri' 2>/dev/null \
+    | sed -e 's/%2B/+/g' -e 's/%2D/-/g' -e 's/%2E/./g' \
+           -e 's/%5F/_/g' -e 's/%2A/*/g' -e 's/%28/(/g' -e 's/%29/)/g'
+}
+
+# Detect the main screen size. Prints "<width> <height>" (logical pixels).
+# Uses awww query (largest output by area), then env vars, then 2560x1600.
+function get-screen-size {
+  local w h
+  if pgrep -f 'awww-daemon' >/dev/null 2>&1; then
+    local line
+    line=$(awww query -j 2>/dev/null | jq -r '[.[][]] | max_by(.width * .height) | "\(.width) \(.height)"' 2>/dev/null)
+    if [[ -n "$line" ]]; then
+      read -r w h <<< "$line"
+    fi
+  fi
+  if [[ -z "${w:-}" || -z "${h:-}" ]]; then
+    w="${PAPER_SCREEN_WIDTH:-2560}"
+    h="${PAPER_SCREEN_HEIGHT:-1600}"
+  fi
+  echo "$w $h"
+}
+
+# Compute the fraction of an image that would be cropped in cover mode.
+# Args: <img-w> <img-h> <screen-w> <screen-h>. Prints a float in [0,1).
+function crop-ratio {
+  local iw="$1" ih="$2" sw="$3" sh="$4"
+  awk -v iw="$iw" -v ih="$ih" -v sw="$sw" -v sh="$sh" 'BEGIN {
+    sx = sw / iw; sy = sh / ih
+    s = (sx > sy) ? sx : sy
+    if (s <= 0) { print 1; exit }
+    scaled = (iw * s) * (ih * s)
+    if (scaled <= 0) { print 1; exit }
+    print 1 - (sw * sh) / scaled
+  }'
+}
+
+# Danbooru provider.
+# Tags: space-separated, e.g. "1girl solo". Sample: "1" for large_file_url.
+# Uses API key auth from $secrets_dir/danbooru.{user,key} when present, which
+# raises the rate limit. Falls back to anonymous. Danbooru counts `random=true`
+# as a tag, so server-side random only works with up to 1 explicit tag; for more
+# tags we fetch a page of posts and pick randomly client-side.
+function provider-danbooru {
+  local tags="$1"
+  local sample="$2"
+  local out_dir="$3"
+  local api="https://danbooru.donmai.us"
+  local encoded
+  encoded=$(url-encode "$tags")
+
+  # build auth query string if credentials are available
+  local auth=""
+  local user_file="$secrets_dir/danbooru.user"
+  local key_file="$secrets_dir/danbooru.key"
+  if [[ -f "$user_file" && -f "$key_file" ]]; then
+    local user key
+    user=$(tr -d '\n\r' < "$user_file")
+    key=$(tr -d '\n\r' < "$key_file")
+    if [[ -n "$user" && -n "$key" ]]; then
+      auth="&login=$(url-encode "$user")&api_key=$(url-encode "$key")"
+    fi
+  fi
+
+  # count whitespace-separated tags
+  local tag_count=0
+  if [[ -n "$tags" ]]; then
+    read -ra _t <<< "$tags"
+    tag_count=${#_t[@]}
+  fi
+
+  # Authenticated users get higher rate limits, but Danbooru counts `random=true`
+  # as a tag, so `random=true` only works with up to 1 explicit tag regardless of
+  # auth. For 2+ tags we fetch a page of results and pick randomly client-side.
+  local url
+  if [[ $tag_count -le 1 ]]; then
+    url="${api}/posts.json?limit=1&random=true"
+    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
+  else
+    url="${api}/posts.json?limit=100"
+    [[ -n "$encoded" ]] && url="${url}&tags=${encoded}"
+  fi
+  url="${url}${auth}"
+
+  local json
+  json=$(curl -sSL --fail -m 30 -A "paper" "$url" 2>/dev/null) || {
+    echo "danbooru: request failed" >&2
+    return 1
+  }
+  [[ -z "$json" ]] && { echo "danbooru: empty response" >&2; return 1; }
+
+  # filter out deleted/banned posts and non-image files, then pick one
+  # (client-side random for 2+ tags)
+  local filtered
+  filtered=$(printf '%s' "$json" | jq -r 'map(select(.is_deleted != true and .is_banned != true and (.file_ext | test("^(png|jpg|jpeg|webp|gif)$"))))') || {
+    echo "danbooru: invalid JSON" >&2
+    return 1
+  }
+
+  # apply crop-ratio filter against the main screen when threshold > 0
+  local thresh="$remote_crop_threshold"
+  if awk "BEGIN{exit !($thresh > 0)}" 2>/dev/null; then
+    local screen_w screen_h
+    read -r screen_w screen_h < <(get-screen-size)
+    filtered=$(printf '%s' "$filtered" | jq -r --argjson sw "$screen_w" --argjson sh "$screen_h" --argjson th "$thresh" '
+      def crop_ratio($iw; $ih):
+        (if ($sw / $iw) > ($sh / $ih) then ($sw / $iw) else ($sh / $ih) end) as $s
+        | 1 - ($sw * $sh) / (($iw * $s) * ($ih * $s));
+      map(select((.image_width // 0) > 0 and (.image_height // 0) > 0 and crop_ratio(.image_width; .image_height) <= $th))
+    ') || {
+      echo "danbooru: crop filter failed" >&2
+      return 1
+    }
+  fi
+
+  local count
+  count=$(printf '%s' "$filtered" | jq 'length')
+  [[ "$count" -eq 0 ]] && {
+    echo "danbooru: no posts matched tags (after crop filter)" >&2
+    return 1
+  }
+
+  local idx=0
+  [[ $tag_count -gt 1 ]] && idx=$(( RANDOM % count ))
+  local post
+  post=$(printf '%s' "$filtered" | jq -r ".[${idx}]")
+
+  local file_url id ext
+  if [[ "$sample" == "1" ]]; then
+    file_url=$(printf '%s' "$post" | jq -r '.large_file_url // empty')
+  else
+    file_url=$(printf '%s' "$post" | jq -r '.file_url // empty')
+  fi
+  [[ -z "$file_url" || "$file_url" == "null" ]] && {
+    echo "danbooru: post has no usable file url" >&2
+    return 1
+  }
+  id=$(printf '%s' "$post" | jq -r '.id')
+  ext=$(printf '%s' "$post" | jq -r '.file_ext')
+
+  mkdir -p "$out_dir"
+  local out="$out_dir/${id}.${ext}"
+  curl -sSL --fail -m 120 -A "paper" -o "$out" "$file_url" 2>/dev/null || {
+    echo "danbooru: image download failed" >&2
+    rm -f "$out"
+    return 1
+  }
+  echo "$out"
+}
+
+# Dispatch to a provider by name. Args: <provider> <tags> <sample>
+# Prints the downloaded file path on stdout.
+function fetch-remote {
+  local provider="$1"
+  local tags="$2"
+  local sample="$3"
+  local fn="provider-${provider}"
+  if ! declare -f "$fn" >/dev/null 2>&1; then
+    echo "unknown remote provider: $provider" >&2
+    return 1
+  fi
+  mkdir -p "$remote_dir/$provider"
+  "$fn" "$tags" "$sample" "$remote_dir/$provider"
+}
+
+# Delete remote images older than remote_retention_days. Args: [provider]
+function prune-remote {
+  local provider="${1:-}"
+  local target="$remote_dir"
+  [[ -n "$provider" ]] && target="$remote_dir/$provider"
+  [[ -d "$target" ]] || return 0
+  if [[ "$remote_retention_days" -le 0 ]]; then
+    find "$target" -type f -delete 2>/dev/null
+  else
+    find "$target" -type f -mtime +"$remote_retention_days" -delete 2>/dev/null
+  fi
+  echo "pruned remote images older than ${remote_retention_days} days in $target"
+}
+
 # Get the current wallpaper path from awww, if running
 function current-wallpaper {
   if ! pgrep -f 'awww-daemon' >/dev/null 2>&1; then
@@ -269,6 +527,23 @@ function cmd-edit-palette {
   fi
   local editor="${EDITOR:-vi}"
   "$editor" "$out"
+
+  # validate the edited JSON and re-apply so changes take effect immediately
+  if ! jq empty "$out" 2>/dev/null; then
+    echo "error: $out is not valid JSON; changes not applied" >&2
+    return 1
+  fi
+  # clamp transparency to [0,1] if present
+  local t
+  t=$(jq -r '.transparency // empty' "$out" 2>/dev/null) || t=""
+  if [[ -n "$t" ]]; then
+    if [[ ! "$t" =~ ^[0-9]+(\.[0-9]+)?$ ]] || ! awk "BEGIN{exit !($t>=0 && $t<=1)}" 2>/dev/null; then
+      echo "error: transparency must be a number in [0,1]; got '$t'" >&2
+      return 1
+    fi
+  fi
+  # re-apply the current wallpaper with the edited palette
+  apply-wallpaper "$image"
 }
 
 function cmd-clear-palette {
@@ -338,17 +613,80 @@ function cmd-set-mode {
   echo "$m"
 }
 
+# Fetch a random wallpaper from a remote provider and apply it.
+# Args: <provider> <tags> <sample>
+function cmd-remote {
+  local provider="$1"
+  local tags="$2"
+  local sample="$3"
+  local image
+  image=$(fetch-remote "$provider" "$tags" "$sample") || return 1
+  echo "fetched: $image" >&2
+  apply-wallpaper "$image"
+}
+
 # --- argument parsing ---
 # Long options are handled manually before getopts since bash getopts doesn't
 # support them natively.
 
 declare -a passthrough=()
+# remote state, populated by --tags/--sample/--crop-threshold and consumed by --remote
+remote_provider=""
+remote_tags=""
+remote_sample="0"
 args=("$@")
 i=0
 while [[ $i -lt ${#args[@]} ]]; do
   arg="${args[$i]}"
   case "$arg" in
     --help)     print-usage; exit 0 ;;
+    --tags)
+      next="${args[$((i+1))]:-}"
+      [[ -z "$next" || "$next" == -* ]] && { echo "--tags requires a tag string" >&2; exit 1; }
+      remote_tags="$next"; i=$((i+1)) ;;
+    --sample)   remote_sample="1" ;;
+    --crop-threshold)
+      next="${args[$((i+1))]:-}"
+      [[ -z "$next" || "$next" == -* ]] && { echo "--crop-threshold requires a percent" >&2; exit 1; }
+      remote_crop_threshold=$(awk -v p="$next" 'BEGIN{print p/100}')
+      i=$((i+1)) ;;
+    --prune-remote)
+      next="${args[$((i+1))]:-}"
+      if [[ -z "$next" || "$next" == -* ]]; then
+        prune-remote ""
+      else
+        prune-remote "$next"; i=$((i+1))
+      fi
+      exit 0 ;;
+    --remote)
+      next="${args[$((i+1))]:-}"
+      if [[ -z "$next" || "$next" == -* ]]; then
+        remote_provider="danbooru"
+      else
+        remote_provider="$next"; i=$((i+1))
+      fi
+      # scan the remaining args for --tags/--sample/--crop-threshold set after --remote
+      j=$((i+1))
+      while [[ $j -lt ${#args[@]} ]]; do
+        a="${args[$j]}"
+        case "$a" in
+          --tags)
+            t="${args[$((j+1))]:-}"
+            [[ -z "$t" || "$t" == -* ]] && { echo "--tags requires a tag string" >&2; exit 1; }
+            remote_tags="$t"; j=$((j+1)) ;;
+          --sample) remote_sample="1" ;;
+          --crop-threshold)
+            t="${args[$((j+1))]:-}"
+            [[ -z "$t" || "$t" == -* ]] && { echo "--crop-threshold requires a percent" >&2; exit 1; }
+            remote_crop_threshold=$(awk -v p="$t" 'BEGIN{print p/100}')
+            j=$((j+1)) ;;
+          --*) ;;
+          *) ;;
+        esac
+        j=$((j+1))
+      done
+      cmd-remote "$remote_provider" "$remote_tags" "$remote_sample"
+      exit 0 ;;
     --edit-palette)
       next="${args[$((i+1))]:-}"
       if [[ -z "$next" || "$next" == -* ]]; then

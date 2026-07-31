@@ -5,23 +5,20 @@ lib.mkIf cfg.foot {
   programs.foot = {
     enable = true;
     server.enable = true;
-
-    settings = {
-      main = {
-        font = "Kode Mono:size=11";
-      };
-
-      bell.system = "no";
-
-      "colors-dark" = {
-        alpha = "0.5";
-      };
-
-      mouse = {
-        hide-when-typing = "yes";
-      };
-    };
   };
+
+  xdg.configFile."foot/foot.ini".text = ''
+    include=~/.config/dynamic-colors/foot.ini
+
+    [main]
+    font=Kode Mono:size=11
+
+    [bell]
+    system=no
+
+    [mouse]
+    hide-when-typing=yes
+  '';
 
   xdg.desktopEntries = {
     foot = {

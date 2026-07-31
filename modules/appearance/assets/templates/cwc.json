@@ -1,5 +1,5 @@
 {
-	"opacity": 0.5,
+	"opacity": __PAPER_TRANSPARENCY__,
 	"colors": {
 		"background": "{{ background }}",
 		"foreground": "{{ foreground }}",

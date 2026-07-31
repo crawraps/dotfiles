@@ -11,7 +11,7 @@
   --cuil-text-dimmed: #565656;
 
   --cuil-background: rgba({{ background | rgb }}, .2);
-  --cuil-background-vivid: rgba({{ background | rgb }}, .5);
+  --cuil-background-vivid: rgba({{ background | rgb }}, __PAPER_TRANSPARENCY__);
   --cuil-background-dimmed: #555555;
 
   --cuil-valid: #82e0aa;
