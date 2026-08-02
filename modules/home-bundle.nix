@@ -22,6 +22,7 @@ let inherit (preferences.user) name; in {
     ./system-maintenance/home.nix
     ./terminal/home.nix
     ./utilities/home.nix
+    ./voxtype/home.nix
     ./widgets/home.nix
     ./file-manager/home.nix
   ];

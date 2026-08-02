@@ -1,0 +1,19 @@
+engine = "whisper"
+state_file = "auto"
+
+[hotkey]
+enabled = false
+
+[whisper]
+model = "small"
+language = "auto"
+
+[parakeet]
+model = "parakeet-tdt-0.6b-v3-int8"
+
+[output]
+mode = "type"
+fallback_to_clipboard = true
+
+[output.notification]
+on_transcription = true

@@ -63,8 +63,13 @@
 
     "$mod, E, exec, workflow default"
     "$mod, t, exec, work-timer toggle"
-
+    "$mod SHIFT, R, exec, voxtype-toggle"
+    "$mod, R, exec, voxtype record start"
     "$mod, tab, exec, hyprctl switchxkblayout all next "
+  ];
+
+  bindr = [
+    "$mod, R, exec, voxtype record stop"
   ];
 
   bindm = [

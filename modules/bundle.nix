@@ -28,6 +28,7 @@
     ./terminal
     ./user
     ./utilities
+    ./voxtype
     ./waydroid
     ./widgets
     ./file-manager

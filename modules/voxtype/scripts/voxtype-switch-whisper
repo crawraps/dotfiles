@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+voxtype config set engine whisper && systemctl --user restart voxtype

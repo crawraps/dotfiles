@@ -79,6 +79,7 @@ The preference key maps directly: `preferences.modules.git` → the `git` module
 | terminal | `preferences.modules.terminal` | `{ foot = bool; kitty = bool; }` | `{ foot = true; kitty = false; }` | terminal selector — imports foot/kitty sub-modules |
 | user | `preferences.modules.user` | `bool` | `true` | user account, groups, autologin |
 | utilities | `preferences.modules.utilities` | `bool` | `true` | cli essentials: fd, rg, jq, ripgrep, wl-clipboard, etc. |
+| voxtype | `preferences.modules.voxtype` | `bool` | `true` | voice-to-text dictation (vulkan) + helper scripts + systemd user service |
 | widgets | `preferences.modules.widgets` | `{ qs = bool; ags = bool; sherlock = bool; }` | `{ qs = true; ags = false; sherlock = false; }` | widget/panel selector — imports qs/ags/sherlock sub-modules |
 | file-manager | `preferences.modules.file-manager` | `bool` | `true` | file manager, disk analyzer, trash manager, etc... |
 
