@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-voxtype config set engine parakeet && systemctl --user restart voxtype

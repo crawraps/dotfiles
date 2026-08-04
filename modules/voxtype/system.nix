@@ -1,9 +1,12 @@
-{ pkgs, inputs, system, preferences, lib, ... }:
+{ pkgs, preferences, lib, ... }:
 
-let cfg = preferences.modules.voxtype; in
+let
+  cfg = preferences.modules.voxtype;
+  voxtype = pkgs.voxtype.override { onnxSupport = true; };
+in
 lib.mkIf cfg {
   environment.systemPackages = [
-    inputs.voxtype.packages.${system}.vulkan
+    voxtype
     pkgs.wtype
     pkgs.wl-clipboard
     pkgs.libnotify

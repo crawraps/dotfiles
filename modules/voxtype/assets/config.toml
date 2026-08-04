@@ -1,12 +1,15 @@
-engine = "whisper"
+engine = "parakeet"
 state_file = "auto"
 
 [hotkey]
 enabled = false
+key = "SCROLLLOCK"
+modifiers = []
 
-[whisper]
-model = "small"
-language = "auto"
+[audio]
+device = "default"
+sample_rate = 16000
+max_duration_secs = 60
 
 [parakeet]
 model = "parakeet-tdt-0.6b-v3-int8"
@@ -14,6 +17,12 @@ model = "parakeet-tdt-0.6b-v3-int8"
 [output]
 mode = "type"
 fallback_to_clipboard = true
+type_delay_ms = 0
 
 [output.notification]
+on_recording_start = false
+on_recording_stop = false
 on_transcription = true
+
+[status]
+icon_theme = "emoji"

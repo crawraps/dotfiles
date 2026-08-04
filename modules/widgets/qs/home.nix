@@ -15,7 +15,7 @@ lib.mkIf cfg.qs {
     layerrule = [
       "blur on, match:namespace ^(cwc_).*"
       "ignore_alpha 0.2, match:namespace ^(cwc_).*"
-      "no_anim on, match:namespace ^(cwc_launcher).*"
+      "no_anim on, match:namespace ^(cwc_).*"
     ];
   };
 

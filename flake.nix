@@ -29,11 +29,6 @@
       url = "github:crawraps/calc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    voxtype = {
-      url = "github:peteonrails/voxtype";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:

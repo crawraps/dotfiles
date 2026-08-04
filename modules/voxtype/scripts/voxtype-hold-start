@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Hold-to-record: called on key press, starts recording and waits for release signal
+# voxtype-hold-start: starts recording, marks that we're in hold mode
+voxtype record start
+echo "1" > "$XDG_RUNTIME_DIR/voxtype/hold-mode"
