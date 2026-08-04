@@ -35,9 +35,9 @@ lib.mkIf (cfg != false) {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "idle_inhibit focus, match:class mpv"
-      "float on, match:class imv"
+    window_rule = [
+      { match = { class = "mpv"; }; idle_inhibit = "focus"; }
+      { match = { class = "imv"; }; float        = true; }
     ];
   };
 }

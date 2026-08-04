@@ -100,9 +100,9 @@ lib.mkIf cfg.zen {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "opaque on, match:class zen-twilight"
-      "no_shadow 0, match:class zen-twilight"
+    window_rule = [
+      { match = { class = "zen-twilight"; }; opaque    = true; }
+      { match = { class = "zen-twilight"; }; no_shadow = false; }
     ];
   };
 }

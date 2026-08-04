@@ -27,6 +27,7 @@ let
 in
 lib.mkIf cfg {
   home.pointerCursor = {
+    enable = true;
     name = "Bibata-Modern-Classic";
     size = 16;
     package = pkgs.bibata-cursors;

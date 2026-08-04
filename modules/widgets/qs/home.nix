@@ -9,13 +9,13 @@ lib.mkIf cfg.qs {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "float on, match:title CWC-Launcher-Terminal.*"
+    window_rule = [
+      { match = { title = "CWC-Launcher-Terminal.*"; }; float = true; }
     ];
-    layerrule = [
-      "blur on, match:namespace ^(cwc_).*"
-      "ignore_alpha 0.2, match:namespace ^(cwc_).*"
-      "no_anim on, match:namespace ^(cwc_).*"
+    layer_rule = [
+      { match = { namespace = "^(cwc_).*"; }; blur         = true; }
+      { match = { namespace = "^(cwc_).*"; }; ignore_alpha = 0.2; }
+      { match = { namespace = "^(cwc_).*"; }; no_anim      = true; }
     ];
   };
 

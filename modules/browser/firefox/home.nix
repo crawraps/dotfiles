@@ -36,10 +36,10 @@ lib.mkIf cfg.firefox {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "idle_inhibit fullscreen, match:class firefox"
-      "opaque on, match:class firefox-nightly"
-      "no_shadow 0, match:class firefox-nightly"
+    window_rule = [
+      { match = { class = "firefox"; };          idle_inhibit = "fullscreen"; }
+      { match = { class = "firefox-nightly"; };  opaque       = true; }
+      { match = { class = "firefox-nightly"; };  no_shadow    = false; }
     ];
   };
 }

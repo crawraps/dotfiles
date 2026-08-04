@@ -149,9 +149,9 @@ lib.mkIf cfg.sherlock {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    layerrule = [
-      "blur on, match:namespace sherlock"
-      "ignore_alpha 0.1, match:namespace sherlock"
+    layer_rule = [
+      { match = { namespace = "sherlock"; }; blur         = true; }
+      { match = { namespace = "sherlock"; }; ignore_alpha = 0.1; }
     ];
   };
 }

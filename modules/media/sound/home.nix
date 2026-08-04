@@ -35,12 +35,10 @@ lib.mkIf (cfg != false) {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "float on, match:class pavucontrol"
-      "float on, match:title wiremix"
-      "float on, match:title ^(Volume Control)$"
-      "size 800 600, match:title ^(Volume Control)$"
-      "move 75 44%, match:title ^(Volume Control)$"
+    window_rule = [
+      { match = { class = "pavucontrol"; };            float = true; persistent_size = true; }
+      { match = { title = "wiremix"; };                float = true; persistent_size = true; }
+      { match = { title = "^(Volume Control)$"; };     float = true; persistent_size = true; }
     ];
   };
 }

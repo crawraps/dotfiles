@@ -20,8 +20,8 @@ lib.mkIf (builtins.isAttrs cfg && cfg.tui or false) {
   };
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
-    windowrule = [
-      "float on, match:title bluetui"
+    window_rule = [
+      { match = { title = "bluetui"; }; float = true; persistent_size = true; }
     ];
   };
 }
