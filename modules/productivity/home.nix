@@ -27,7 +27,7 @@ lib.mkIf cfg {
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
     window_rule = [
       { match = { class = "obsidian"; }; opacity = "0.999"; }
-      { match = { class = "settings.*obsidian"; }; float = true; }
+      { match = { class = "obsidian"; initial_title = "Settings.*"; }; float = true; persistent_size = true; }
     ];
   };
 }

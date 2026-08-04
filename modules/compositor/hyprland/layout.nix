@@ -35,8 +35,7 @@
 
   window_rule = [
     # float transient/modal windows spawned by other windows
-    { match = { modal = true; }; float = true; }
-    { match = { float = true; }; persistent_size = true; }
+    { match = { modal = true; }; float = true; persistent_size = true; }
     { match = { xwayland = true; };              border_color = "rgb(FFff00) rgb(880808)"; }
     { match = { float = false; workspace = "w[tv1]"; }; border_size = 0; rounding = 0; }
     { match = { float = false; workspace = "f[1]"; };   border_size = 0; rounding = 0; }

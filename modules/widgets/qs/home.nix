@@ -10,7 +10,7 @@ lib.mkIf cfg.qs {
 
   wayland.windowManager.hyprland.settings = lib.mkIf preferences.modules.compositor.hyprland {
     window_rule = [
-      { match = { title = "CWC-Launcher-Terminal.*"; }; float = true; }
+      { match = { title = "CWC-Launcher-Terminal.*"; }; float = true; persistent_size = true; }
     ];
     layer_rule = [
       { match = { namespace = "^(cwc_).*"; }; blur         = true; }
