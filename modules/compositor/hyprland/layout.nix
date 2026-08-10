@@ -12,7 +12,7 @@
     master = {
       orientation                   = "center";
       slave_count_for_center_master = 3;
-      mfact                         = 0.7;
+      mfact                         = 0.67;
       smart_resizing                = true;
     };
 

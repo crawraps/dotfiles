@@ -11,7 +11,7 @@ let
   workspaceBinds = lib.concatMap (i:
     let key = toString (if i == 10 then 0 else i); in [
       (b  "${mod} + ${key}"         ''hl.dsp.focus({ workspace = ${toString i} })'')
-      (b  "${mod} + SHIFT + ${key}" ''hl.dsp.window.move({ workspace = ${toString i} })'')
+      (b  "${mod} + SHIFT + ${key}" ''hl.dsp.window.move({ workspace = ${toString i}, follow = false })'')
     ]
   ) (lib.range 1 10);
 in
