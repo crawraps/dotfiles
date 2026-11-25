@@ -94,7 +94,7 @@ lib.mkIf cfg {
 
         { on = [ "<C-g>" ]; run = "shell -- ${pkgs.dragon-drop}/bin/dragon-drop -x -i -T %h"; }
 
-        { on = [ "e" "p" ]; run = ["shell 'paper -f \$0' --confirm"]; desc = "set as wallpaper"; }
+        { on = [ "e" "p" ]; run = ["shell -- paper -f %h"]; desc = "set as wallpaper"; }
       ];
     };
 
