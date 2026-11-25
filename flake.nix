@@ -85,7 +85,7 @@
         gaming = { steam = true; };
         system-maintenance = {
           tui = true;
-          auto-update = true;
+          auto-update = false;
           collect-garbage = true;
         };
         media = {
