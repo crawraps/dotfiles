@@ -1,3 +1,5 @@
+startup-message-capture = false
+
 [font]
 normal = ["Kode Mono"]
 size = 12
