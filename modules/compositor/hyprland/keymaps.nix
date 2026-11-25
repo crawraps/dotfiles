@@ -27,15 +27,14 @@ in
     (bf "XF86AudioLowerVolume"   ''hl.dsp.exec_cmd("pamixer -d 5")''                          { locked = true; repeating = true; })
     (bf "XF86AudioMute"          ''hl.dsp.exec_cmd("pamixer -t")''                            { locked = true; })
     (bf "XF86AudioMicMute"       ''hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")'' { locked = true; })
-    (b  "Insert"                ''hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")'')
     (bf "XF86MonBrightnessDown" ''hl.dsp.exec_cmd("brightnessctl -d nvidia_0 -s -e set 5%-")'' { locked = true; repeating = true; })
     (bf "XF86MonBrightnessUp"   ''hl.dsp.exec_cmd("brightnessctl -d nvidia_0 -s -e set 5%+")'' { locked = true; repeating = true; })
     (b  "Print"                 ''hl.dsp.exec_cmd("hyprquickshot")'')
 
     # player management
-    (b "${mod} + code:60" ''hl.dsp.exec_cmd("playerctl next")'')
-    (b "${mod} + code:59" ''hl.dsp.exec_cmd("playerctl previous")'')
-    (b "${mod} + M"       ''hl.dsp.exec_cmd("playerctl play-pause")'')
+    (b "XF86AudioPrev" ''hl.dsp.exec_cmd("playerctl previous")'')
+    (b "XF86AudioPlay" ''hl.dsp.exec_cmd("playerctl play-pause")'')
+    (b "XF86AudioNext" ''hl.dsp.exec_cmd("playerctl next")'')
 
     # window management
     (b "${mod} + SHIFT + E" ''hl.dsp.exit()'')

@@ -12,6 +12,7 @@ let inherit (preferences.user) name; in {
     ./email/home.nix
     ./environment/home.nix
     ./git/home.nix
+    ./gaming/home.nix
     ./kde-connect/home.nix
     ./media/home.nix
     ./mongodb/home.nix

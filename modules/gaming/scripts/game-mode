@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+monitor="eDP-2"
+refresh_rate="$(hyprctl -j monitors | jq -r --arg monitor "$monitor" '.[] | select(.name == $monitor) | .refreshRate')"
+
+if (( ${refresh_rate%.*} <= 60 )); then
+  hyprctl eval 'hl.monitor({ output = "eDP-2", mode = "2560x1600@165", position = "auto-right", scale = 1.25 }); hl.config({ input = { scroll_factor = 2.6, sensitivity = 0.2 } })'
+  hyprctl notify 2 3000 "rgb(00ff00)" "Desktop mode: 165 Hz"
+else
+  hyprctl eval 'hl.monitor({ output = "eDP-2", mode = "2560x1600@60", position = "auto-right", scale = 1.25 }); hl.config({ input = { scroll_factor = 1, sensitivity = -0.3 } })'
+  hyprctl notify 2 3000 "rgb(00ff00)" "Game mode: 60 Hz"
+fi

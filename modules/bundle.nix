@@ -11,6 +11,7 @@
     ./docker
     ./email
     ./environment
+    ./gaming
     ./git
     ./hardware
     ./kde-connect

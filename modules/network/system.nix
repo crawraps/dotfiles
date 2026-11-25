@@ -10,7 +10,6 @@ lib.mkIf cfg {
       trustedInterfaces = [ "tailscale0" ];
       allowedUDPPorts = [ config.services.tailscale.port ];
     };
-    nameservers = [ "1.1.1.1" "8.8.8.8" ];
     networkmanager = {
       enable = true;
       wifi.powersave = false;
@@ -23,8 +22,8 @@ lib.mkIf cfg {
   services.resolved = {
     enable = true;
     settings.Resolve = {
-      DNS = [ "1.1.1.1" ];
-      DNSOverTLS = "yes";
+      DNSOverTLS = "no";
+      FallbackDNS = [ "" ];
     };
   };
 

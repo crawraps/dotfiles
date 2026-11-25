@@ -1,6 +1,6 @@
 {
   monitor = [
-    { output = "eDP-2";   mode = "highres"; position = "auto-right"; scale = 1.25; }
+    { output = "eDP-2";   mode = "2560x1600@165"; position = "auto-right"; scale = 1.25; }
     { output = "HDMI-A-1"; mode = "highres"; position = "0x0";       scale = 1.25; }
   ];
 
@@ -9,7 +9,7 @@
       kb_layout          = "us,ru";
       numlock_by_default = true;
       follow_mouse       = 1;
-      sensitivity        = 0;
+      sensitivity        = 0.2;
       scroll_factor      = 2.6;
       touchpad = {
         natural_scroll = true;

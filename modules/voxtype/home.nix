@@ -2,7 +2,7 @@
 
 let
   cfg = preferences.modules.voxtype;
-  voxtype = pkgs.voxtype.override { onnxSupport = true; };
+  voxtype = import ./package.nix { inherit pkgs; };
 in
 lib.mkIf cfg {
   home.file = {

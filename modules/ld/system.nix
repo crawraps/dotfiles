@@ -12,5 +12,6 @@ lib.mkIf cfg {
     openssl
     curl
     expat
+    wayland
   ];
 }

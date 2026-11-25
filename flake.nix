@@ -82,6 +82,7 @@
         direnv = true;
         email = true;
         git = { tui = true; };
+        gaming = { steam = true; };
         system-maintenance = {
           tui = true;
           auto-update = true;
@@ -105,7 +106,7 @@
         env = { zsh = true; };
         security = true;
         kdeConnect = true;
-        keyboard = true;
+        keyboard = false;
         ld = true;
         locale = true;
         mongodb = false;
